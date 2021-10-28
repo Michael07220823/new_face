@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 import os
-import logging
 from .kernel.detection import FaceDetection
 from .kernel.alignment import FaceAlignment
 from .kernel.landmark import FaceLandmark
@@ -31,12 +30,12 @@ from .kernel.openface import OpenFace
 from .kernel.lbpcnn import LBPCNN
 from .kernel.lbph import LBPH
 
-__AUTHOR__ = "Overcomer"
-__VERSION__ = "0.0.2"
+__author__ = "Overcomer"
+__version__ = "0.0.4"
 
 root_dir = os.path.join(os.getenv("HOME"), ".new_face")
 
 # Build new_face root directory
 if not os.path.exists(root_dir):
     os.makedirs(root_dir)
-    logging.info("Builed {} directory to {}.".format("new_face", root_dir))
+    print("Builed {} directory to {}.".format("new_face", root_dir))
