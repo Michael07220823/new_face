@@ -30,7 +30,7 @@ import imutils
 from mtcnn import MTCNN
 from new_tools import check_image
 from .download import download_models
-
+from .config import root_dir
 
 
 class FaceDetection(object):
@@ -42,8 +42,6 @@ class FaceDetection(object):
     DLIB = 1
     SSD_DNN = 2
     MTCNN = 3
-    
-    root_dir = os.path.join(os.getenv("HOME"), ".new_face")
 
 
     def load_detector(self, method_ID=int()):
@@ -73,13 +71,13 @@ class FaceDetection(object):
         
         if method_ID == self.HAAR:
             model_name = models_id_name[method_ID]
-            model_path = os.path.join(self.root_dir, model_name)
+            model_path = os.path.join(root_dir, model_name)
             
             # Download model.
             if not os.path.exists(model_path):
-                download_models(model_name=model_name, save_path=self.root_dir)
+                download_models(model_name=model_name, save_path=root_dir)
 
-            detector = cv2.CascadeClassifier(os.path.join(self.root_dir, model_name))
+            detector = cv2.CascadeClassifier(os.path.join(root_dir, model_name))
 
             return detector
 
@@ -91,14 +89,14 @@ class FaceDetection(object):
             network = None
 
             for model in models_id_name[method_ID]:
-                model_path = os.path.join(self.root_dir, model)
+                model_path = os.path.join(root_dir, model)
                 
                 # Download model.
                 if not os.path.exists(model_path):
-                    download_models(model_name=model, save_path=self.root_dir)
+                    download_models(model_name=model, save_path=root_dir)
             
-            face_config = os.path.join(self.root_dir, models_id_name[method_ID][0])
-            face_model = os.path.join(self.root_dir, models_id_name[method_ID][1])
+            face_config = os.path.join(root_dir, models_id_name[method_ID][0])
+            face_model = os.path.join(root_dir, models_id_name[method_ID][1])
             network = cv2.dnn.readNetFromCaffe(face_config, face_model)
 
             return network
