@@ -1,5 +1,4 @@
-scikit-learn
-tensorflow-gpu
+tensorflow
 mtcnn
 sklearn
 imutils<=0.5.4
