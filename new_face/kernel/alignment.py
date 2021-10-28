@@ -30,8 +30,9 @@ import dlib
 from mtcnn import MTCNN
 import imutils
 from imutils.face_utils import FaceAligner
-from new_timer import AutoTimer
 from new_tools import check_image
+from .config import root_dir
+from .download import download_models
 
 
 class FaceAlignment(object):
@@ -40,8 +41,6 @@ class FaceAlignment(object):
     """
     MTCNN = 0
     DLIB = 1
-    
-    root_dir = os.path.join(os.getenv("HOME"), ".new_face")
 
 
     def __compute_center_point(self, left_eye=tuple(), right_eye=tuple()):
@@ -56,7 +55,7 @@ class FaceAlignment(object):
 
         Return
         -------
-        center_point: center point axis of two eyes.
+        center_point: Center point axis of two eyes.
         """
         
         x = int((left_eye[0] + right_eye[0]) / 2)
@@ -153,7 +152,6 @@ class FaceAlignment(object):
             Return:
             -------
             roi:
-            
                 (x, y, w, h)
                     x: Face left-top corner x coordinate point.
                     y: Face left-top corner y coordinate point.
@@ -174,7 +172,6 @@ class FaceAlignment(object):
         Args:
         -----
         method_ID:
-
             FaceAlignment.MTCNN: Load mtcnn detector.
             FaceAlignment.DLIB:  Load dlib face detector、shape predictor and face aligner of imutils.
         
@@ -182,8 +179,6 @@ class FaceAlignment(object):
         Return:
         -------
         detector: Face detector.
-
-        shape_predictor: Dlib shape_predictor, only return when use FaceAlignment.DLIB.
 
         face_aligner: imutils face aligner, only return when use FaceAlignment.DLIB.
         """
@@ -198,10 +193,14 @@ class FaceAlignment(object):
             return detector
         elif method_ID == FaceAlignment.DLIB:
             logging.info("Loading dlib detector...")
-            shape_landmark_file_path = "face/models/landmark/shape_predictor_5_face_landmarks.dat"
 
-            # logging.info("Please input face size:")
-            # face_size = int(input())
+            # Download model.
+            model_name = "shape_predictor_5_face_landmarks.dat"
+            shape_landmark_file_path = os.path.join(root_dir, model_name)
+            if not os.path.exists(shape_landmark_file_path):
+                download_models(model_name, root_dir)
+
+            # Default face size.
             face_size = 256
 
             # Face detector.
@@ -225,31 +224,30 @@ class FaceAlignment(object):
                         detector,
                         image,
                         conf_threshold=0.75,
-                        align=True,
                         vision=False,
                         vision_millisecs=0,
-                        save_dir=None):
+                        save_dir=None,
+                        face_size=256):
         """
-        mtcnn_alignment method is used to alignment face by mtcnn method.
+        mtcnn_alignment method is used to alignment face by multi-task cascaded convolutional networks method.
         
         ※Notice: MTCNN need to RGB image, if you use cv2.imread() to read image, you need swap R and B channel.
 
         Args:
         -----
-
         detector: Input MTCNN instance.
         
         image: Image can input image array or image path.
 
         conf_threshold: conf_threshold value is used to judge the face detection true or false.
 
-        align: Align face or not.
-
         vision: Show face alignment image.
 
         vision_millisecs: Show image seconds. 
         
         save_dir: Saving path of face alignment images.
+
+        face_size: Saved face size.
 
 
         Return:
@@ -261,7 +259,7 @@ class FaceAlignment(object):
                 w: Width.
                 h: Height.
 
-        raw_image: Original image.
+        raw_image: Raw image.
 
         face_images: Image of face alignment.
         """
@@ -285,41 +283,8 @@ class FaceAlignment(object):
         result = detector.detect_faces(rgb_image)
         logging.debug("mtcnn_alignment.result: {}".format(result))
 
-        # Build directory of saved.
-        if save_dir != None:
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-        
-        # Face Detection.
-        if align == False:
-            if len(result) > 0:
-                for num, people in enumerate(result, start=1):
-                    if people["confidence"] >= conf_threshold:
-                        rois.append(people["box"])
-                        x, y, w, h = people["box"]
-
-                        face_image = raw_image[y:y+h, x:x+w]
-                        face_images.append(face_image)
-                        
-                        # Show image.
-                        if vision:
-                            cv2.imshow("Raw Image", imutils.resize(raw_image, width=640))
-                            cv2.imshow("Face Image", imutils.resize(face_image, width=250))
-                            cv2.waitKey(vision_millisecs)
-                            cv2.destroyAllWindows()
-
-                        # Save image.
-                        if save_dir != None:
-                            image_path = os.path.join(save_dir, "{}.jpg".format(num).zfill(4))
-                            cv2.imwrite(image_path, face_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
-                            
-                            if os.path.exists(image_path):
-                                logging.info("Saved '{}' successfully !".format(image_path))
-                            else:
-                                logging.warning("Saved '{}' failed !".format(image_path))
-            return (rois, raw_image, face_images)
-
         # Face Alignment.
+        logging.debug("Aligning face...")
         if len(result) > 0:
             for num, people in enumerate(result, start=1):
                 if people["confidence"] >= conf_threshold:
@@ -337,7 +302,6 @@ class FaceAlignment(object):
                     rotation_point = self.__compute_center_point(lefteye, righteye)
 
                     # Compute rotate angle.
-                    logging.debug("Aligning face...")
                     rotation_degree = self.__compute_degree(lefteye, righteye)
 
                     # Rotate image.
@@ -348,20 +312,29 @@ class FaceAlignment(object):
                     x, y, w, h = roi = people['box']
                     rois.append(roi)
 
+                    # Face area expand.
                     nx, ny, nw, nh = self.__area_expand(roi)
                     align_face_image = cv2.cvtColor(rgb_rotated[ny:ny+nh, nx:nx+nw], cv2.COLOR_RGB2BGR)
+
+                    # Resize face size.
+                    align_face_image = cv2.resize(align_face_image, (face_size, face_size))
                     face_images.append(align_face_image)
 
                     # Show image.
                     if vision:
-                        cv2.imshow("Raw Image", imutils.resize(raw_image, width=640))
-                        orig_face_image = image[y:y+h, x:x+w]
-                        cv2.imshow("Face Image", imutils.resize(orig_face_image, width=250))
-                        cv2.imshow("MTCNN Face Alignment", imutils.resize(align_face_image, width=250))
+                        cv2.imshow("MTCNN Raw Image...", imutils.resize(raw_image, width=640))
+                        raw_face_image = image[y:y+h, x:x+w]
+                        cv2.imshow("Raw Face Image...", imutils.resize(raw_face_image, width=250))
+                        cv2.imshow("MTCNN Align {} faces...", imutils.resize(align_face_image, width=250))
                         cv2.waitKey(vision_millisecs)
-                        cv2.destroyAllWindows()
 
                     if save_dir != None:
+                        # Build directory of saved.
+                        if not os.path.exists(save_dir):
+                            os.makedirs(save_dir)
+                            logging.info("Builed {} directory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !")
+                            raise FileNotFoundError
+
                         # Save image.
                         image_path = os.path.join(save_dir, "{}.jpg".format(num).zfill(4))
                         cv2.imwrite(image_path, align_face_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
@@ -370,8 +343,9 @@ class FaceAlignment(object):
                             logging.info("Saved '{}' successfully !".format(image_path))
                         else:
                             logging.warning("Saved '{}' failed !".format(image_path))
+            cv2.destroyAllWindows()
         else:
-            logging.debug("MTCNN not detect the face !")
+            logging.debug("MTCNN doesn't detect the face !")
 
         return (rois, raw_image, face_images)
 
@@ -382,49 +356,52 @@ class FaceAlignment(object):
                        image,
                        vision=False,
                        vision_millisecs=0,
-                       save_path=str()):
+                       save_dir=None,
+                       face_size=256):
         """
-        dlib_alignment method is used to alignment face by 5 or 68 point landmark method. It can use shape 5 or 68 point 
-        landmark file.
+        dlib_alignment method is used to alignment face by 5 or 68 point landmark method.
+        It can use shape 5 or 68 point landmark file.
 
         Args:
         -----
         detector: Input dlib face detector instance.
 
-        face_aligner: Input face_aligner of imutils instance.
+        face_aligner: FaceAligner instance of imutils.
 
-        image: Image can input image array or image path.
+        image: Image array or image path.
 
         vision: Show face alignment image.
 
         vision_millisecs: Show image seconds.
         
-        save_path: Saving path of face alignment image.
+        save_dir: Saving path of face alignment image.
+
+        face_size: Saved face size.
 
 
         Return:
         --------
-        roi:
+        rois:
             (x, y, w, h)
                 x: Face left-top corner x coordinate point.
                 y: Face left-top corner y coordinate point.
                 w: Width.
                 h: Height.
 
-        raw_image: Original image.
+        raw_image: Raw image.
 
         face_image: Image of face alignment.
         """
         
         # Init variable, don't delete.
-        roi = None
+        rois = list()
         raw_image = None
-        face_image = None
+        face_images = list()
 
         # Check image.
         status, image_arry = check_image(image)
         if status !=0:
-            return roi, raw_image, face_image
+            return rois, raw_image, face_images
 
         raw_image = image_arry.copy()
 
@@ -432,68 +409,38 @@ class FaceAlignment(object):
 
         # show the original input image and detect faces in the grayscale
         # image
-        logging.info("Detecting face...")
+        logging.debug("Detecting face...")
         rects = detector(gray, 2)
-        logging.debug("dlib_alignment.rects: {}".format(rects))
+        logging.debug("alignment.dlib_alignment.rects: {}".format(rects))
 
-        logging.info("Aligning face image...")
+        # Align face.
+        logging.debug("Aligning face image...")
         if len(rects) > 0:
             for rect in rects:
-                roi = self.__dlib_rect_to_roi(rect)
                 face_image = face_aligner.align(image_arry, gray, rect)
+                roi = self.__dlib_rect_to_roi(rect)
+
+                rois.append(roi)
+                face_images.append(face_image)
             
             # Show image.
-            if vision:
-                cv2.imshow("Dlib face alignment", face_image)
-                cv2.waitKey(vision_millisecs)
-                cv2.destroyAllWindows()
+            for num, face in enumerate(face_images, start=1):
+                if vision:
+                    cv2.imshow("Dlib Raw Image...", imutils.resize(raw_image, width=640))
+                    cv2.imshow("Dlib Align {} face...".format(num), imutils.resize(face, width=250))
+                    cv2.waitKey(vision_millisecs)
                 
-            if save_path != str():
-                cv2.imwrite(save_path, face_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
-                
-                if os.path.exists(save_path):
-                    logging.info("Saved image to '{}' successfully !".format(save_path))
-                else:
-                    logging.warning("Saved image to '{}' failed !".format(save_path))
+                if save_dir != None:
+                    if not os.path.exists(save_dir):
+                        os.makedirs(save_dir)
+                        logging.info("Builed {} dircetory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !".format(save_dir))
+                        raise FileNotFoundError
+
+                    image_path = os.path.join(save_dir, "{}.jpg".format(num).zfill(4))
+                    cv2.imwrite(image_path, cv2.resize(face, (face_size, face_size)), [cv2.IMWRITE_JPEG_QUALITY, 100])                    
+                    logging.info("Saved image to '{}' successfully !".format(image_path)) if os.path.exists(image_path) else logging.warning("Saved image to '{}' failed !".format(image_path))
+            cv2.destroyAllWindows()
         else:
-            logging.warning("Dlib not detect the face !")
+            logging.warning("Dlib doesn't detect the face !")
 
-        return (roi, raw_image, face_image)
-
-
-if __name__ == "__main__":
-    # Set logging config.
-    FORMAT = '%(asctime)s [%(levelname)s] %(message)s'
-    DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-    logging.basicConfig(level=logging.DEBUG, format=FORMAT, datefmt=DATE_FORMAT)
-    
-
-    vc = cv2.VideoCapture(0)
-    face_alignment = FaceAlignment()
-    mtcnn_detector = face_alignment.load_detector(face_alignment.MTCNN)
-
-    # image = cv2.imread("face\\data\\americanse.jpg")
-    # image = cv2.imread("face\\data\\china.jpg")
-    # image = cv2.imread("face\\data\\occlusion.png")
-    # image = cv2.imread("D:/Github/face/data/train/kevin/kevin00000001.jpg")
-
-    # with AutoTimer("MTCNN Face Alignment"):
-    #     rois, raw_image, align_images = face_alignment.mtcnn_alignment(mtcnn_detector,
-    #                                                                    image,
-    #                                                                    align=False,
-    #                                                                    vision=True,
-    #                                                                    save_dir=None)
-    # logging.debug(len(rois))
-    # logging.debug(len(align_images))
-    while  vc.isOpened():
-        try:
-            _, frame = vc.read()
-
-            with AutoTimer("MTCNN", 4):
-                rois, raw_image, face_images = face_alignment.mtcnn_alignment(mtcnn_detector,
-                                                                              frame,
-                                                                              conf_threshold=0.9,
-                                                                              align=True,
-                                                                              vision=True)
-        except KeyboardInterrupt:
-            vc.release()
+        return (rois, raw_image, face_image)
