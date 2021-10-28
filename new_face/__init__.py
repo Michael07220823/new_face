@@ -26,9 +26,13 @@ import os
 import logging
 from .kernel.detection import FaceDetection
 from .kernel.alignment import FaceAlignment
+from .kernel.landmark import FaceLandmark
 from .kernel.openface import OpenFace
 from .kernel.lbpcnn import LBPCNN
+from .kernel.lbph import LBPH
 
+__AUTHOR__ = "Overcomer"
+__VERSION__ = "0.0.2"
 
 root_dir = os.path.join(os.getenv("HOME"), ".new_face")
 
