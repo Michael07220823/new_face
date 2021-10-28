@@ -1,0 +1,12 @@
+scikit-learn
+tensorflow-gpu
+mtcnn
+sklearn
+imutils<=0.5.4
+cmake<=3.18.4.post1
+dlib<=19.22.0
+scikit-image
+new_tools
+opencv-python
+opencv-contrib-python
+pydot
