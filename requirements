@@ -1,9 +1,9 @@
-tensorflow
+tensorflow==2.5.0
 mtcnn
 sklearn
-imutils<=0.5.4
-cmake<=3.18.4.post1
-dlib<=19.22.0
+imutils
+cmake
+dlib
 scikit-image
 new_tools
 opencv-python

@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Michael07220823/new_face.git",
     keywords="Face Recognition",
-    install_requires=["opencv-python", "opencv-contrib-python", "tensorflow", "mtcnn", "sklearn", "imutils", "cmake", "dlib", "scikit-image", "new_tools", "pydot"],
+    install_requires=["opencv-python>=4.4.0.36", "opencv-contrib-python>=4.4.0.36", "tensorflow==2.5.0", "mtcnn", "sklearn", "imutils", "cmake", "dlib", "scikit-image", "new_tools", "pydot"],
     license="MIT License",
     packages=setuptools.find_packages(include=["new_face", "new_face.*"], exclude=["__pycache__"]),
     classifiers=[
