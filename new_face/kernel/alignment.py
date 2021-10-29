@@ -195,7 +195,7 @@ class FaceAlignment(object):
             logging.info("Loading dlib detector...")
 
             # Download model.
-            model_name = "shape_predictor_5_face_landmarks.dat"
+            model_name = "shape_predictor_68_face_landmarks.dat"
             shape_landmark_file_path = os.path.join(root_dir, model_name)
             if not os.path.exists(shape_landmark_file_path):
                 download_models(model_name, root_dir)
@@ -399,13 +399,13 @@ class FaceAlignment(object):
         face_images = list()
 
         # Check image.
-        status, image_arry = check_image(image)
+        status, image = check_image(image)
         if status !=0:
             return rois, raw_image, face_images
 
-        raw_image = image_arry.copy()
+        raw_image = image.copy()
 
-        gray = cv2.cvtColor(image_arry, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # show the original input image and detect faces in the grayscale
         # image
@@ -417,8 +417,8 @@ class FaceAlignment(object):
         logging.debug("Aligning face image...")
         if len(rects) > 0:
             for rect in rects:
-                face_image = face_aligner.align(image_arry, gray, rect)
                 roi = self.__dlib_rect_to_roi(rect)
+                face_image = face_aligner.align(image, gray, rect)
 
                 rois.append(roi)
                 face_images.append(face_image)
@@ -443,4 +443,4 @@ class FaceAlignment(object):
         else:
             logging.warning("Dlib doesn't detect the face !")
 
-        return (rois, raw_image, face_image)
+        return (rois, raw_image, face_images)
