@@ -30,7 +30,7 @@ while run and vc.isOpened():
     _, frame = vc.read()
     rois, raw_image, face_images = face_detect.haar_detect(haae_detector,
                                                            frame,
-                                                           vision=True,
+                                                           vision=False,
                                                            save_path="haar.jpg")
     for x,y,w,h in rois:
         cv2.rectangle(raw_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
@@ -59,8 +59,8 @@ logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt=DATE_FORMAT)
 
 
 vc = cv2.VideoCapture(0)
-# shape_predictor = FaceLandmark.load_shape_predictor()
-shape_predictor = FaceLandmark.load_shape_predictor("shape_predictor_68_face_landmarks.dat")
+# shape_5_predictor = FaceLandmark.load_shape_predictor()
+shape_68_predictor = FaceLandmark.load_shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 while vc.isOpened():
     _, image = vc.read()
@@ -99,21 +99,28 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt=DATE_FORMAT)
 
 
-run = True
 vc = cv2.VideoCapture(0)
 face_alignment = FaceAlignment()
+# detector, face_aligner = face_alignment.load_detector(face_alignment.DLIB)
 mtcnn_detector = face_alignment.load_detector(face_alignment.MTCNN)
 
 if vc.isOpened():
     _, frame = vc.read()
 
+    # rois, raw_image, align_images = face_alignment.dlib_alignment(detector,
+    #                                                               face_aligner,
+    #                                                               frame,
+    #                                                               vision=True,
+    #                                                               save_dir="D:\\GitHub\\new_face",
+    #                                                               face_size=256)
+
     rois, raw_image, face_images = face_alignment.mtcnn_alignment(mtcnn_detector,
                                                                   frame,
                                                                   conf_threshold=0.9,
                                                                   vision=True,
-                                                                  save_dir="D:\\new_face",
+                                                                  save_dir="D:\\GitHub\\new_face",
                                                                   face_size=256)
-vc.release()
+    vc.release()
 ```
 ---
 <br>
