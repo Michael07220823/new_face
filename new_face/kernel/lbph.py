@@ -93,12 +93,10 @@ class LBPH(object):
         model_path: LBPH model path.
         """
         
-        # Encode the labels.
         logging.info("Encoding labels...")
         label_encoder = LabelEncoder()
         encoded_labels = label_encoder.fit_transform(labels)
         
-        # Save LabelEncoder object.
         with open(label_encoder_path, "wb") as lab_file:
             pickle.dump(label_encoder, lab_file)
 
@@ -107,11 +105,9 @@ class LBPH(object):
         else:
             logging.warning("Saved label encoder object failed !")
             
-        # Train model.
         logging.info("Training model...")
         self.recognizer.train(images, encoded_labels)
         
-        # Save model.
         self.recognizer.write(model_path)
         if os.path.exists(model_path):
             logging.info("Saved model successfully !")
@@ -136,11 +132,9 @@ class LBPH(object):
         labels: Labels array.
         """
 
-        # Update model.
         logging.info("Updating model...")
         self.recognizer.update(images, labels)
 
-        # Save model.
         logging.info("Saving model...")
         self.recognizer.write(model_path)
 
@@ -166,12 +160,10 @@ class LBPH(object):
             logging.critical("{} path error !".format(model_path), exc_info=True)
             raise FileNotFoundError
 
-        # Load label encoder.
         logging.info("Loading label ecnoder...")
         with open(label_encoder_path, "rb") as lab:
             self.label_encoder = pickle.load(lab)
 
-        # Load LBPH model.
         logging.info("Loading model...")
         self.recognizer.read(model_path)
 

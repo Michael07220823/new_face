@@ -89,7 +89,6 @@ class FaceAlignment(object):
         lefteye_x, lefteye_y = left_eye
         righteye_x, righteye_y = right_eye
 
-        # Radian to degree. formula: degree = radian × (180/π) .
         rotation_degree = math.degrees(math.atan2(righteye_y - lefteye_y, righteye_x - lefteye_x))
         logging.debug("FaceAlignment.__compute_degree.rotation_degree: {:.2f}°".format(rotation_degree))
 
@@ -194,25 +193,20 @@ class FaceAlignment(object):
         elif method_ID == FaceAlignment.DLIB:
             logging.info("Loading dlib detector...")
 
-            # Download model.
             model_name = "shape_predictor_68_face_landmarks.dat"
             shape_landmark_file_path = os.path.join(root_dir, model_name)
             if not os.path.exists(shape_landmark_file_path):
                 download_models(model_name, root_dir)
 
-            # Default face size.
             face_size = 256
 
-            # Face detector.
             detector = dlib.get_frontal_face_detector()
 
-            # Face lanmarker.
             if not os.path.exists(shape_landmark_file_path): 
                 logging.error("{} path error !".format(shape_landmark_file_path), exc_info=True)
                 raise FileNotFoundError
             shape_predictor = dlib.shape_predictor(shape_landmark_file_path)
 
-            # Face alignmenter.
             face_aligner = FaceAligner(shape_predictor, desiredFaceWidth=face_size)
 
             return detector, face_aligner
@@ -264,7 +258,6 @@ class FaceAlignment(object):
         face_images: Image of face alignment.
         """
         
-        # Init variable, don't delete.
         rois = list()
         raw_image = None
         face_images = list()
@@ -278,49 +271,37 @@ class FaceAlignment(object):
 
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        # Detect face and get face five point.
         logging.debug("Detecting face...")
         result = detector.detect_faces(rgb_image)
         logging.debug("mtcnn_alignment.result: {}".format(result))
 
-        # Face Alignment.
         logging.debug("Aligning face...")
         if len(result) > 0:
             for num, people in enumerate(result, start=1):
                 if people["confidence"] >= conf_threshold:
-                    # Face five point: left_eye, right_eye, nose, left_mouth, right_mouth.
                     face_point = people["keypoints"]
                     
-                    # Get image height and width.
                     (img_h, img_w) = rgb_image.shape[:2]
 
-                    # Face point.
                     lefteye = face_point["left_eye"]
                     righteye = face_point["right_eye"]
 
-                    # Compute center coordinate.
                     rotation_point = self.__compute_center_point(lefteye, righteye)
 
-                    # Compute rotate angle.
                     rotation_degree = self.__compute_degree(lefteye, righteye)
 
-                    # Rotate image.
                     M = cv2.getRotationMatrix2D(rotation_point, rotation_degree, scale=1.0)
                     rgb_rotated = cv2.warpAffine(rgb_image, M, (img_w, img_h), flags=cv2.INTER_CUBIC)
                     
-                    # ROI
                     x, y, w, h = roi = people['box']
                     rois.append(roi)
 
-                    # Face area expand.
                     nx, ny, nw, nh = self.__area_expand(roi)
                     align_face_image = cv2.cvtColor(rgb_rotated[ny:ny+nh, nx:nx+nw], cv2.COLOR_RGB2BGR)
 
-                    # Resize face size.
                     align_face_image = cv2.resize(align_face_image, (face_size, face_size))
                     face_images.append(align_face_image)
 
-                    # Show image.
                     if vision:
                         cv2.imshow("MTCNN Raw Image...", imutils.resize(raw_image, width=640))
                         raw_face_image = image[y:y+h, x:x+w]
@@ -329,13 +310,11 @@ class FaceAlignment(object):
                         cv2.waitKey(vision_millisecs)
 
                     if save_dir != None:
-                        # Build directory of saved.
                         if not os.path.exists(save_dir):
                             os.makedirs(save_dir)
                             logging.info("Builed {} directory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !")
                             raise FileNotFoundError
 
-                        # Save image.
                         image_path = os.path.join(save_dir, "{}.jpg".format(num).zfill(4))
                         cv2.imwrite(image_path, align_face_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
                         
@@ -393,12 +372,10 @@ class FaceAlignment(object):
         face_image: Image of face alignment.
         """
         
-        # Init variable, don't delete.
         rois = list()
         raw_image = None
         face_images = list()
 
-        # Check image.
         status, image = check_image(image)
         if status !=0:
             return rois, raw_image, face_images
@@ -407,13 +384,10 @@ class FaceAlignment(object):
 
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        # show the original input image and detect faces in the grayscale
-        # image
         logging.debug("Detecting face...")
         rects = detector(gray, 2)
         logging.debug("alignment.dlib_alignment.rects: {}".format(rects))
 
-        # Align face.
         logging.debug("Aligning face image...")
         if len(rects) > 0:
             for rect in rects:
@@ -423,7 +397,6 @@ class FaceAlignment(object):
                 rois.append(roi)
                 face_images.append(face_image)
             
-            # Show image.
             for num, face in enumerate(face_images, start=1):
                 if vision:
                     cv2.imshow("Dlib Raw Image...", imutils.resize(raw_image, width=640))

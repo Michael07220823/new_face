@@ -37,7 +37,6 @@ class FaceDetection(object):
     """
     FaceDetect class can use four kinds method to detect face. Four methods: Haar Cascade、Dlib Hog、SSD DNN and MTCNN.
     """
-    # Face Detection methods.
     HAAR = 0
     DLIB = 1
     SSD_DNN = 2
@@ -73,7 +72,6 @@ class FaceDetection(object):
             model_name = models_id_name[method_ID]
             model_path = os.path.join(root_dir, model_name)
             
-            # Download model.
             if not os.path.exists(model_path):
                 download_models(model_name=model_name, save_path=root_dir)
 
@@ -91,7 +89,6 @@ class FaceDetection(object):
             for model in models_id_name[method_ID]:
                 model_path = os.path.join(root_dir, model)
                 
-                # Download model.
                 if not os.path.exists(model_path):
                     download_models(model_name=model, save_path=root_dir)
             
@@ -149,7 +146,6 @@ class FaceDetection(object):
         face_images: Face images.
         """
 
-        # Init variable, don't delete.
         rois = list()
         raw_image = None
         face_images = list()
@@ -171,7 +167,6 @@ class FaceDetection(object):
     
         logging.debug("detection.haar_detect.faces count: {}".format(len(faces)))
 
-        # Draw a rectangle around the faces
         if len(faces) > 0:
             for roi in faces:    
                 (x, y, w, h) = roi
@@ -239,7 +234,6 @@ class FaceDetection(object):
         face_images: Face images.
         """
 
-        # Init variable, don't delete.
         rois = list()
         raw_image = None
         face_images = list()
@@ -322,7 +316,6 @@ class FaceDetection(object):
         face_images: Face images.
         """
 
-        # Init variable, don't delete.
         rois = list()
         raw_image = None
         face_images = list()
@@ -337,7 +330,6 @@ class FaceDetection(object):
         frameHeight = image.shape[0]
         frameWidth = image.shape[1]
 
-        # This image net to three chaneel image format.
         blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), [104, 117, 123], swapRB=False, crop=False)
 
         network.setInput(blob)
@@ -415,7 +407,6 @@ class FaceDetection(object):
         face_images: Face images.
         """
         
-        # Init variable, don't delete.
         rois = list()
         raw_image = None
         face_images = list()
@@ -427,7 +418,6 @@ class FaceDetection(object):
         raw_image = image.copy()
         draw_image = image.copy()
 
-        # Swap blue and green channel.
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         detector.min_face_size = min_face_size

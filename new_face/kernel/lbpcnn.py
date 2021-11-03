@@ -58,58 +58,47 @@ class LBPCNN(OpenFace):
         """
         model = Sequential(name=name)
 
-        # CNN 1.
         model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", input_shape=(256, 256, 1), activation="relu", name="cnn1_1"))
         model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", activation="relu", name="cnn1_2"))
         model.add(layers.BatchNormalization(name="bn1"))
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2, name="mp1"))
 
-        # CNN 2.
         model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), padding="same", activation="relu", name="cnn2_1"))
         model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), padding="same", activation="relu", name="cnn2_2"))
         model.add(layers.BatchNormalization(name="bn2"))
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2, name="mp2"))
 
-        # CNN 3.
         model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1, padding="same", activation="relu", name="cnn3_1"))
         model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1, padding="same", activation="relu", name="cnn3_2"))
         model.add(layers.BatchNormalization(name="bn3"))
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2, name="mp3"))
 
-        # CNN 4.
         model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), padding="same", activation="relu", name="cnn4_1"))
         model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), padding="same", activation="relu", name="cnn4_2"))
         model.add(layers.BatchNormalization(name="bn4"))
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2, name="mp4"))
 
-        # CNN 5.
         model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", activation="relu", name="cnn5_1"))
         model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", activation="relu", name="cnn5_2"))
         model.add(layers.BatchNormalization(name="bn5"))
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2, name="mp5"))
 
-        # # Flatten.
         model.add(layers.Flatten(name="flatten"))
 
-        # # Fully Conected 1.
         model.add(layers.Dense(256, activation="relu", name="fc1"))
         model.add(layers.Dropout(0.25, name="dp1"))
         model.add(layers.BatchNormalization(name="bn6"))
         
-        # Fully Conected 2.
         model.add(layers.Dense(128, kernel_regularizer=regularizers.L1L2(0.0001), bias_regularizer=regularizers.L1L2(0.0001), activation="relu", name="fc2"))
         model.add(layers.Dropout(0.25, name="dp2"))
         model.add(layers.BatchNormalization(name="bn7"))
 
-        # Softmax.
         model.add(layers.Dense(28, activation="softmax", name="softmax"))
 
-        # Model compile.
         model.compile(loss="sparse_categorical_crossentropy",
                     optimizer=Adam(learning_rate=2.5e-4),
                     metrics=["accuracy"])
 
-        # Show model layer.
         model.summary()
 
         self.model = model
@@ -185,13 +174,11 @@ class LBPCNN(OpenFace):
         
         logging.info("Training LBPCNN model...")
         
-        # Make model saved path.
         root_path = os.path.join(save_path, "{}".format(time_record))
         logging.info("Building LBPCNN model saved path to {}...".format(root_path))
         if not os.path.join(root_path):
             os.makedirs(root_path)
         
-        # Save LBPCNN model architecture image.
         plot_image = os.path.join(root_path, "{}_LBPCNN_model_architecture.png".format(time_record))
         logging.info("Saving LBPCNN model architecture image to {}...".format(plot_image))
         plot_model(model,
@@ -199,7 +186,6 @@ class LBPCNN(OpenFace):
                    show_shapes=True,
                    show_layer_names=True)
         
-        # Tensorboard callback.
         log_dir = os.path.join(root_path, "logs\\fit\\{}".format(time_record))
         logging.info("Building tensorboard log directory to {}...".format(log_dir))
         os.makedirs(log_dir)
@@ -210,7 +196,6 @@ class LBPCNN(OpenFace):
                                            write_images=True,
                                            embeddings_freq=False)
 
-        # ModelCheckpoint callback.
         checkpoint_dir = os.path.join(root_path, "{}_best_checkpoint".format(time_record))
         logging.info("Building checkpoint directory to {}...".format(checkpoint_dir))
         os.makedirs(checkpoint_dir)
@@ -221,7 +206,6 @@ class LBPCNN(OpenFace):
                                               mode='min',
                                               verbose=0,
                                               save_best_only=True)
-        # Train LBPCNN model.
         train_history = model.fit(ｘ=images,
                                   ｙ=labels,
                                   validation_data=validation_data,

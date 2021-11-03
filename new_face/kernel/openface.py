@@ -69,20 +69,15 @@ class OpenFace(object):
             
             state, bgr_image = check_image(image_path)
             if state == 0:
-                # Show image.
                 if vision:
                     cv2.imshow("Extracting image...", resize(bgr_image, width=250))
                     cv2.waitKey(10)
 
-                # Nonmization and resize image to 96x96 pixels.
                 face_blob = cv2.dnn.blobFromImage(bgr_image, 1.0/255, (96, 96), (0, 0, 0), swapRB=True, crop=False)
 
-                # Input image to embedder_network.
                 self.embedder_model.setInput(face_blob)
                 vec = self.embedder_model.forward()
 
-                # add the name of the person + corresponding face
-                # embedding to their respective lists
                 embedding_vectors.append(vec.flatten())
                 total += 1
                 
@@ -116,25 +111,20 @@ class OpenFace(object):
         label_encoder_path: Label encoder saved path.
         """
         
-        # Encode the labels.
         logging.info("Encoding labels...")
         label_encoder = LabelEncoder()
         encoded_labels = label_encoder.fit_transform(labels)
         
-        # Train svm classifier.
         logging.info("Training SVM classifier...")
-        # classifier = SVC(C=100.0, gamma="auto", kernel="rbf", probability=True)
         self.classifier = SVC(C=C, kernel=kernel, gamma=gamma, probability=True)
         self.classifier.fit(embedding_vectors, encoded_labels)
 
-        # Save label encoder.
         logging.info("Saving Label encoder...")
         with open(label_encoder_path, "wb") as f: 
             f.write(pickle.dumps(label_encoder))
         if os.path.exists(label_encoder_path): 
             logging.info("Saved label encoder successfully !")
         
-        # Save SVM classifier.
         logging.info("Saving classifier...")
         with open(classifier_path, "wb") as f:
             f.write(pickle.dumps(self.classifier))
@@ -169,19 +159,16 @@ class OpenFace(object):
         embedder_network_path: Embedder network model saved path.
         """
 
-        # Load label encoder.
         if os.path.exists(label_encoder_path):
             logging.info("Loading label encoder...")
             with open(label_encoder_path, "rb") as lab:
                 self.label_encoder = pickle.load(lab)
         
-        # Load SVM classifier.
         if os.path.exists(classifier_path):
             logging.info("Loading classifier...")
             with open(classifier_path, "rb") as classifier:
                 self.classifier = pickle.load(classifier)
         
-        # Load embedder network
         if os.path.exists(embedder_network_path):
             logging.info("Loading OpenFace embedder network model...")
             self.embedder_model = cv2.dnn.readNetFromTorch(embedder_network_path)
