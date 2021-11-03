@@ -315,7 +315,7 @@ class FaceAlignment(object):
                             logging.info("Builed {} directory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !")
                             raise FileNotFoundError
 
-                        image_path = os.path.join(save_dir, "{}.jpg".format(num).zfill(4))
+                        image_path = os.path.join(save_dir, "{}.jpg".format(str(num).zfill(4)))
                         cv2.imwrite(image_path, align_face_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
                         
                         if os.path.exists(image_path):
@@ -409,7 +409,7 @@ class FaceAlignment(object):
                         logging.info("Builed {} dircetory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !".format(save_dir))
                         raise FileNotFoundError
 
-                    image_path = os.path.join(save_dir, "{}.jpg".format(num).zfill(4))
+                    image_path = os.path.join(save_dir, "{}.jpg".format(str(num).zfill(4)))
                     cv2.imwrite(image_path, cv2.resize(face, (face_size, face_size)), [cv2.IMWRITE_JPEG_QUALITY, 100])                    
                     logging.info("Saved image to '{}' successfully !".format(image_path)) if os.path.exists(image_path) else logging.warning("Saved image to '{}' failed !".format(image_path))
             cv2.destroyAllWindows()
