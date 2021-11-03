@@ -130,7 +130,9 @@ class FaceDetection(object):
 
         max_size: Maximum possible object size. Objects larger than that are ignored. If maxSize == minSize model is evaluated on single scale.
 
-        vision: Show image. 
+        vision: Show image.
+
+        save_path: Save images of detected faces. If vision is False, will doesn't save image.
 
 
         Returns:
@@ -218,7 +220,9 @@ class FaceDetection(object):
 
         conf_threshold: conf_threshold value is used to judge the face detection true or false.
 
-        vision: Show image. 
+        vision: Show image.
+
+        save_path: Save images of detected faces. If vision is False, will doesn't save image. 
 
 
         Returns:
@@ -299,7 +303,9 @@ class FaceDetection(object):
 
         conf_threshold: conf_threshold value is used to judge the face detection true or false.
 
-        vision: Show image. 
+        vision: Show image.
+
+        save_path: Save images of detected faces. If vision is False, will doesn't save image. 
 
 
         Returns:
@@ -392,6 +398,8 @@ class FaceDetection(object):
         conf_threshold: conf_threshold value is used to judge the face detection true or false.
         
         vision: Show image.
+
+        save_path: Save images of detected faces. If vision is False, will doesn't save image.
         
 
         Returns:
