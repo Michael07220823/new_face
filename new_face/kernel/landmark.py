@@ -73,10 +73,10 @@ class FaceLandmark(object):
         predictor = dlib.shape_predictor(predictor_path)
 
         # Detect face and get roi.
-        detect_face = detector(raw_image, 2)
+        detect_faces = detector(raw_image, 0)
         
-        if len(detect_face) > 0:
-            for num, roi in enumerate(detect_face):
+        if len(detect_faces) > 0:
+            for roi in detect_faces:
                 shape_face = predictor(raw_image, roi)
 
                 # Get five points from face.
@@ -138,24 +138,24 @@ class FaceLandmark(object):
         predictor = dlib.shape_predictor(predictor_path)
 
         # Detect face and get roi.
-        detect_face = detector(raw_image, 2)
+        detect_faces = detector(raw_image, 0)
 
-        if len(detect_face) > 0:
-            for i, roi in enumerate(detect_face):
+        if len(detect_faces) > 0:
+            for roi in detect_faces:
                 shape_face = predictor(raw_image, roi)
 
+                if get_five_points:
+                    five_points = dict()
+                    five_points["lefteye_leftcorner"] = (shape_face.part(36).x, shape_face.part(36).y)
+                    five_points["lefteye_rightcorner"] = (shape_face.part(39).x, shape_face.part(39).y)
+                    five_points["righteye_rightcorner"] = (shape_face.part(45).x, shape_face.part(45).y)
+                    five_points["righteye_leftcorner"] = (shape_face.part(42).x, shape_face.part(42).y)
+                    five_points["nose"] = (shape_face.part(30).x, shape_face.part(30).y)
+                    return five_points
+                    
                 for num in range(0, 68):
                     sixty_eight_points[num] = (shape_face.part(num).x, shape_face.part(num).y)
 
-                # Get five points from face.
-                if get_five_points:
-                    five_points = dict()
-                    five_points["lefteye_leftcorner"] = (shape_face.part(46).x, shape_face.part(46).y)
-                    five_points["lefteye_rightcorner"] = (shape_face.part(43).x, shape_face.part(43).y)
-                    five_points["righteye_rightcorner"] = (shape_face.part(37).x, shape_face.part(37).y)
-                    five_points["righteye_leftcorner"] = (shape_face.part(40).x, shape_face.part(40).y)
-                    five_points["nose"] = (shape_face.part(34).x, shape_face.part(34).y)
-                    return five_points
                 return sixty_eight_points
         else:
             logging.info("Dlib doesn't detect the face !")
@@ -186,9 +186,9 @@ class FaceLandmark(object):
 
     
     @classmethod
-    def fivepoint2threepoint(cls, five_point=dict()):
+    def fivepoints_to_threepoints(cls, five_point=dict()):
         """
-        fivepoint2threepoint method used to transfer 5 points to 3 points.
+        fivepoints_to_threepoints method used to transfer 5 points to 3 points.
 
         Args:
         -----
@@ -202,33 +202,31 @@ class FaceLandmark(object):
 
         Return:
         -------
-        three_point:
+        three_points:
             left_eye: left eye center coordinate.
             right_eye: Right eye center coordinate.
             nose: Nose coordinate.
         """
         
-        three_point = dict()
+        three_points = dict()
         if len(five_point) < 5:
             logging.error("five_point variable element small than 5 !")
             raise ValueError
         lefteye_leftcorner_x1, lefteye_leftcorner_y1 = five_point["lefteye_leftcorner"]
         lefteye_rightcorner_x2, lefteye_rightcorner_y2 = five_point["lefteye_rightcorner"]
 
-        three_point["left_eye"] = cls.__calc_center_point(lefteye_leftcorner_x1, 
+        three_points["left_eye"] = cls.__calc_center_point(lefteye_leftcorner_x1, 
                                                           lefteye_leftcorner_y1, 
                                                           lefteye_rightcorner_x2, 
-                                                          lefteye_rightcorner_y2
-                                                         )
+                                                          lefteye_rightcorner_y2)
 
         righteye_leftcorner_x1, righteye_leftcorner_y1 = five_point["righteye_leftcorner"]
         righteye_rightcorner_x2, righteye_rightcorner_y2 = five_point["righteye_rightcorner"]
 
-        three_point["right_eye"] = cls.__calc_center_point(righteye_leftcorner_x1,
+        three_points["right_eye"] = cls.__calc_center_point(righteye_leftcorner_x1,
                                                            righteye_leftcorner_y1, 
                                                            righteye_rightcorner_x2,
-                                                           righteye_rightcorner_y2
-                                                          )
-        three_point["nose"] = five_point["nose"]
+                                                           righteye_rightcorner_y2)
+        three_points["nose"] = five_point["nose"]
 
-        return three_point
+        return three_points
