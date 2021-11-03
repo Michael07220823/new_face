@@ -35,14 +35,43 @@ class FaceLandmark(object):
     """
 
     @classmethod
+    def load_shape_predictor(cls,
+                             model_name="shape_predictor_5_face_landmarks.dat"):
+        """
+        load_shape_predictor method is used to load dlib shape predictor.
+
+        Args
+        ----
+        model_name: shape_predictor_5_face_landmarks.dat or shape_predictor_68_face_landmarks.dat file names.
+
+
+        Return
+        ------
+        shape_predictor: shape_predictor instance.
+        """
+
+        shape_predictor_path = os.path.join(root_dir, model_name)
+
+        if not os.path.exists(shape_predictor_path):
+            download_models(model_name, save_path=root_dir)
+
+        shape_predictor = dlib.shape_predictor(shape_predictor_path)
+        
+        return shape_predictor
+
+
+    @classmethod
     def dlib_5_points(cls,
-                      image=None):
+                      image=None,
+                      shape_predictor=object()):
         """
         dlib_5_points method is use face five points of dlib to mark left eye, right eye, nose of face.
 
         Args:
         -----
         image: Input image path or image array.
+
+        shape_predictor: shape_predictor instance.
 
 
         Returns:
@@ -55,46 +84,37 @@ class FaceLandmark(object):
             nose: Nose coordinate.
         """
 
-        five_point = dict()
+        five_points = dict()
 
-        # Read image.
         status, raw_image = check_image(image)
         if status != 0:
-            return five_point
+            return five_points
 
         detector = dlib.get_frontal_face_detector()
 
-        # Download model.
-        model_name = "shape_predictor_5_face_landmarks.dat"
-        predictor_path = os.path.join(root_dir, model_name)
-        if not os.path.exists(predictor_path):
-            download_models(model_name, save_path=root_dir)
-
-        predictor = dlib.shape_predictor(predictor_path)
-
-        # Detect face and get roi.
         detect_faces = detector(raw_image, 0)
         
         if len(detect_faces) > 0:
             for roi in detect_faces:
-                shape_face = predictor(raw_image, roi)
+                shape_face = shape_predictor(raw_image, roi)
 
-                # Get five points from face.
                 lefteye_leftcorner, lefteye_rightcorner, righteye_rightcorner, righteye_leftcorner, nose = shape_face.parts()
-                five_point["lefteye_leftcorner"] = (lefteye_leftcorner.x, lefteye_leftcorner.y)
-                five_point["lefteye_rightcorner"] = (lefteye_rightcorner.x, lefteye_rightcorner.y)
-                five_point["righteye_rightcorner"] = (righteye_rightcorner.x, righteye_rightcorner.y)
-                five_point["righteye_leftcorner"] = (righteye_leftcorner.x, righteye_leftcorner.y)
-                five_point["nose"] = (nose.x, nose.y)
+                five_points["lefteye_leftcorner"] = (lefteye_leftcorner.x, lefteye_leftcorner.y)
+                five_points["lefteye_rightcorner"] = (lefteye_rightcorner.x, lefteye_rightcorner.y)
+                five_points["righteye_rightcorner"] = (righteye_rightcorner.x, righteye_rightcorner.y)
+                five_points["righteye_leftcorner"] = (righteye_leftcorner.x, righteye_leftcorner.y)
+                five_points["nose"] = (nose.x, nose.y)
 
-                return five_point
+                return five_points
         else:
             logging.info("Dlib doesn't detect the face !")
+            return five_points
 
 
     @classmethod
     def dlib_68_points(cls,
                        image=None,
+                       shape_predictor=object(),
                        get_five_points=False):
         """
         dlib_68_points method is use face sixty-eight points of dlib to mark sixty-eight of face.
@@ -102,6 +122,8 @@ class FaceLandmark(object):
         Args:
         -----
         image: Input image path or image array.
+
+        shape_predictor: shape_predictor instance.
 
         get_five_points: Control only get five points of face from sixty-eight points of face.
 
@@ -116,33 +138,21 @@ class FaceLandmark(object):
             nose: Nose coordinate.
 
         sixty_points: Sixty_eight points of face.
-
-        0: No detect the face.
         """
 
         sixty_eight_points = dict()
 
-        # Read image.
         status, raw_image = check_image(image)
         if status != 0:
             return sixty_eight_points
             
         detector = dlib.get_frontal_face_detector()
-        
-        # Download model.
-        model_name = "shape_predictor_68_face_landmarks.dat"
-        predictor_path = os.path.join(root_dir, model_name)
-        if not os.path.exists(predictor_path):
-            download_models(model_name, save_path=root_dir)
 
-        predictor = dlib.shape_predictor(predictor_path)
-
-        # Detect face and get roi.
         detect_faces = detector(raw_image, 0)
 
         if len(detect_faces) > 0:
             for roi in detect_faces:
-                shape_face = predictor(raw_image, roi)
+                shape_face = shape_predictor(raw_image, roi)
 
                 if get_five_points:
                     five_points = dict()
@@ -152,14 +162,15 @@ class FaceLandmark(object):
                     five_points["righteye_leftcorner"] = (shape_face.part(42).x, shape_face.part(42).y)
                     five_points["nose"] = (shape_face.part(30).x, shape_face.part(30).y)
                     return five_points
-                    
+
                 for num in range(0, 68):
                     sixty_eight_points[num] = (shape_face.part(num).x, shape_face.part(num).y)
 
                 return sixty_eight_points
         else:
             logging.info("Dlib doesn't detect the face !")
-            
+            return sixty_eight_points
+
     
     @classmethod
     def __calc_center_point(cls, x1=int(), y1=int(), x2=int(), y2=int()):
