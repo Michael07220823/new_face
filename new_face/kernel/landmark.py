@@ -24,6 +24,7 @@ SOFTWARE.
 
 import os
 import logging
+import cv2
 import dlib
 from new_tools import check_image
 from .config import root_dir
@@ -63,7 +64,9 @@ class FaceLandmark(object):
     @classmethod
     def dlib_5_points(cls,
                       image=None,
-                      shape_predictor=object()):
+                      shape_predictor=object(),
+                      vision=False,
+                      save_path=None):
         """
         dlib_5_points method is use face five points of dlib to mark left eye, right eye, nose of face.
 
@@ -72,6 +75,10 @@ class FaceLandmark(object):
         image: Input image path or image array.
 
         shape_predictor: shape_predictor instance.
+
+        vision: Show image.
+
+        save_path: Save images of detected faces. If vision is False, will doesn't save image.
 
 
         Returns:
@@ -85,6 +92,7 @@ class FaceLandmark(object):
         """
 
         five_points = dict()
+        five_points_dict = dict()
 
         status, raw_image = check_image(image)
         if status != 0:
@@ -92,30 +100,51 @@ class FaceLandmark(object):
 
         detector = dlib.get_frontal_face_detector()
 
-        detect_faces = detector(raw_image, 0)
+        detect_faces = detector(raw_image, 2)
         
         if len(detect_faces) > 0:
-            for roi in detect_faces:
-                shape_face = shape_predictor(raw_image, roi)
+            for num, roi in enumerate(detect_faces):
+                five_points = dict()
 
+                shape_face = shape_predictor(raw_image, roi)
                 lefteye_leftcorner, lefteye_rightcorner, righteye_rightcorner, righteye_leftcorner, nose = shape_face.parts()
                 five_points["lefteye_leftcorner"] = (lefteye_leftcorner.x, lefteye_leftcorner.y)
                 five_points["lefteye_rightcorner"] = (lefteye_rightcorner.x, lefteye_rightcorner.y)
                 five_points["righteye_rightcorner"] = (righteye_rightcorner.x, righteye_rightcorner.y)
                 five_points["righteye_leftcorner"] = (righteye_leftcorner.x, righteye_leftcorner.y)
                 five_points["nose"] = (nose.x, nose.y)
+                five_points_dict[num] = five_points
 
-                return five_points
+            if vision:
+                for item in five_points_dict:
+                    person = five_points_dict[item]
+                    for point in person:
+                        coordinate = person[point]
+                        cv2.circle(raw_image, coordinate, 2, (0, 255, 0), 2)
+
+                cv2.imshow("Face Landmark", raw_image)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+            if save_path != None:
+                cv2.imwrite(save_path, raw_image)
+                
+                if not os.path.exists(save_path):
+                    logging.error("{} saved failed !".format(save_path))
+                    raise FileNotFoundError
         else:
             logging.info("Dlib doesn't detect the face !")
-            return five_points
+        
+        return five_points_dict
 
 
     @classmethod
     def dlib_68_points(cls,
                        image=None,
                        shape_predictor=object(),
-                       get_five_points=False):
+                       get_five_points=False,
+                       vision=False,
+                       save_path=None):
         """
         dlib_68_points method is use face sixty-eight points of dlib to mark sixty-eight of face.
         
@@ -127,20 +156,28 @@ class FaceLandmark(object):
 
         get_five_points: Control only get five points of face from sixty-eight points of face.
 
+        vision: Show image.
 
+        save_path: Save images of detected faces. If vision is False, will doesn't save image.
+
+        
         Returns:
         --------
-        five_points: dict()
+        five_points_dict:
             lefteye_leftcorner: left eye corner coordinate of left eye.
             lefteye_rightcorner: Right eye corner coordinate of left eye.
             righteye_rightcorner: Right eye corner coordinate of right eye.
             righteye_leftcorner: Left eye corner coordinate of right eye.
             nose: Nose coordinate.
 
-        sixty_points: Sixty_eight points of face.
+        sixty_eight_points_dict: Sixty eight points of face.
         """
 
+        five_points = dict()
         sixty_eight_points = dict()
+        five_points_dict = dict()
+        sixty_eight_points_dict = dict()
+
 
         status, raw_image = check_image(image)
         if status != 0:
@@ -148,10 +185,10 @@ class FaceLandmark(object):
             
         detector = dlib.get_frontal_face_detector()
 
-        detect_faces = detector(raw_image, 0)
+        detect_faces = detector(raw_image, 2)
 
         if len(detect_faces) > 0:
-            for roi in detect_faces:
+            for num, roi in enumerate(detect_faces):
                 shape_face = shape_predictor(raw_image, roi)
 
                 if get_five_points:
@@ -161,15 +198,45 @@ class FaceLandmark(object):
                     five_points["righteye_rightcorner"] = (shape_face.part(45).x, shape_face.part(45).y)
                     five_points["righteye_leftcorner"] = (shape_face.part(42).x, shape_face.part(42).y)
                     five_points["nose"] = (shape_face.part(30).x, shape_face.part(30).y)
-                    return five_points
+                    five_points_dict[num] = five_points
+                else:
+                    sixty_eight_points = dict()
+                    for i in range(0, 68):
+                        sixty_eight_points[i] = (shape_face.part(i).x, shape_face.part(i).y)
 
-                for num in range(0, 68):
-                    sixty_eight_points[num] = (shape_face.part(num).x, shape_face.part(num).y)
+                    sixty_eight_points_dict[num] = sixty_eight_points
+            
+            if vision:
+                if get_five_points:
+                    for item in five_points_dict:
+                        person = five_points_dict[item]
+                        for point in person:
+                            coordinate = person[point]
+                            cv2.circle(raw_image, coordinate, 2, (0, 255, 0), 2)
+                else:       
+                    for item in sixty_eight_points_dict:
+                        person = sixty_eight_points_dict[item]
+                        for point in person:
+                            coordinate = person[point]
+                            cv2.circle(raw_image, coordinate, 2, (0, 255, 0), 2)
 
-                return sixty_eight_points
+                cv2.imshow("Face Landmark", raw_image)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+            
+            if save_path != None:
+                cv2.imwrite(save_path, raw_image)
+                
+                if not os.path.exists(save_path):
+                    logging.error("{} saved failed !".format(save_path))
+                    raise FileNotFoundError
         else:
             logging.info("Dlib doesn't detect the face !")
-            return sixty_eight_points
+
+        if get_five_points:
+            return five_points_dict
+        else:
+            return sixty_eight_points_dict
 
     
     @classmethod
