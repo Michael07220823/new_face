@@ -219,7 +219,7 @@ class FaceAlignment(object):
                         image,
                         conf_threshold=0.75,
                         vision=False,
-                        vision_millisecs=0,
+                        vision_millisecs=100,
                         save_dir=None,
                         face_size=256):
         """
@@ -306,16 +306,15 @@ class FaceAlignment(object):
                         cv2.imshow("MTCNN Raw Image...", imutils.resize(raw_image, width=640))
                         raw_face_image = image[y:y+h, x:x+w]
                         cv2.imshow("Raw Face Image...", imutils.resize(raw_face_image, width=250))
-                        cv2.imshow("MTCNN Align {} faces...", imutils.resize(align_face_image, width=250))
+                        cv2.imshow("MTCNN Align faces...", imutils.resize(align_face_image, width=250))
                         cv2.waitKey(vision_millisecs)
 
                     if save_dir != None:
                         if not os.path.exists(save_dir):
                             os.makedirs(save_dir)
                             logging.info("Builed {} directory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !")
-                            raise FileNotFoundError
 
-                        image_path = os.path.join(save_dir, "{}.jpg".format(str(num).zfill(4)))
+                        image_path = os.path.join(save_dir, "{}.jpg".format(str(num).zfill(6)))
                         cv2.imwrite(image_path, align_face_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
                         
                         if os.path.exists(image_path):
@@ -334,7 +333,7 @@ class FaceAlignment(object):
                        face_aligner,
                        image,
                        vision=False,
-                       vision_millisecs=0,
+                       vision_millisecs=100,
                        save_dir=None,
                        face_size=256):
         """
@@ -400,16 +399,15 @@ class FaceAlignment(object):
             for num, face in enumerate(face_images, start=1):
                 if vision:
                     cv2.imshow("Dlib Raw Image...", imutils.resize(raw_image, width=640))
-                    cv2.imshow("Dlib Align {} face...".format(num), imutils.resize(face, width=250))
+                    cv2.imshow("Dlib Align faces...", imutils.resize(face, width=250))
                     cv2.waitKey(vision_millisecs)
                 
                 if save_dir != None:
                     if not os.path.exists(save_dir):
                         os.makedirs(save_dir)
-                        logging.info("Builed {} dircetory successfully !") if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !".format(save_dir))
-                        raise FileNotFoundError
+                        logging.info("Builed {} dircetory successfully !".format(save_dir)) if os.path.exists(save_dir) else logging.warning("Builed {} directory failed !".format(save_dir))
 
-                    image_path = os.path.join(save_dir, "{}.jpg".format(str(num).zfill(4)))
+                    image_path = os.path.join(save_dir, "{}.jpg".format(str(num).zfill(6)))
                     cv2.imwrite(image_path, cv2.resize(face, (face_size, face_size)), [cv2.IMWRITE_JPEG_QUALITY, 100])                    
                     logging.info("Saved image to '{}' successfully !".format(image_path)) if os.path.exists(image_path) else logging.warning("Saved image to '{}' failed !".format(image_path))
             cv2.destroyAllWindows()
