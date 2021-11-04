@@ -31,9 +31,10 @@ from .kernel.lbpcnn import LBPCNN
 from .kernel.lbph import LBPH
 
 __author__ = "Overcomer"
-__version__ = "0.0.2"
+__version__ = "0.0.4"
 
-root_dir = os.path.join(os.getenv("HOME"), ".new_face")
+root = os.getenv("USERPROFILE") if os.getenv("HOME") == None else os.getenv("HOME")
+root_dir = os.path.join(root, ".new_face")
 
 # Build new_face root directory
 if not os.path.exists(root_dir):
