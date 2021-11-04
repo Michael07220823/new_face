@@ -50,8 +50,8 @@ class FaceDetection(object):
         Args:
         -----
         method_ID:
-            HAAR: Haarcascade detector.
-            DLIB: Dlib HoG detector.
+            HAAR: Haar Cascade detector.
+            DLIB: Dlib HOG detector.
             SSD_DNN: SSD DNN detector.
             MTCNN: MTCNN detector.
         
@@ -60,7 +60,7 @@ class FaceDetection(object):
         -------
         detector: Face detector.
 
-        network: SSD DNN Network.
+        network: SSD DNN network.
         """
         
         models_id_name = {
