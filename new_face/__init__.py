@@ -23,18 +23,21 @@ SOFTWARE.
 """
 
 import os
+from .tools.config import root_dir
+
+from .kernel.landmark import FaceLandmark
 from .kernel.detection import FaceDetection
 from .kernel.alignment import FaceAlignment
-from .kernel.landmark import FaceLandmark
+from .kernel.lbph import LBPH
 from .kernel.openface import OpenFace
 from .kernel.lbpcnn import LBPCNN
-from .kernel.lbph import LBPH
+
 
 __author__ = "Overcomer"
-__version__ = "0.0.4"
+__version__ = "0.0.4.1"
+__module__ = ["kernel", "tools"]
+__class__ = ["FaceDetection", "FaceLandmark", "FaceAlignment", "LBPH", "OpenFace", "LBPCNN"]
 
-root = os.getenv("USERPROFILE") if os.getenv("HOME") == None else os.getenv("HOME")
-root_dir = os.path.join(root, ".new_face")
 
 # Build new_face root directory
 if not os.path.exists(root_dir):

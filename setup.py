@@ -29,7 +29,7 @@ with open("README.md", "r", encoding="utf8") as readme:
 
 setuptools.setup(
     name="new_face",
-    version="0.0.4",
+    version="0.0.4.1",
     author="Overcomer",
     author_email="michael31703@gmail.com",
     description="Face Recognition Tools",
@@ -38,24 +38,25 @@ setuptools.setup(
     url="https://github.com/Michael07220823/new_face.git",
     keywords="Face Recognition",
     install_requires=[
-        "numpy", 
-        "opencv-python",
-        "opencv-contrib-python",
-        "tensorflow<=2.5.0",
+        "tensorflow>=2.0.0",
         "mtcnn",
         "sklearn",
         "imutils",
         "cmake",
         "dlib",
         "scikit-image",
-        "new_tools",
+        "matplotlib",
+        "opencv-python",
+        "opencv-contrib-python",
         "pydot"
+        "gdown",
+        "new_tools",
+        "new_timer",
     ],
     license="MIT License",
     packages=setuptools.find_packages(include=["new_face", "new_face.*"], exclude=["__pycache__"]),
     classifiers=[
         "Operating System :: Microsoft :: Windows",
-        "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3.6",
         "License :: OSI Approved :: MIT License"
         ]
