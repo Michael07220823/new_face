@@ -38,5 +38,5 @@ model_dict = {
     "shape_predictor_68_face_landmarks.dat": "https://docs.google.com/uc?export=download&id=1wt8wottsmQCmn46Zk6AoatEIHjFMF3qC",
     
     # Face Recognition openface nn4.small2.v1.t7 model.
-    "nn4.small2.v1.t7": "https://docs.google.com/uc?export=download&id=17KpYlFbmYan6FYXPAkV5W9pWK5DC93at"
+    "nn4.small2.v1.t7": "https://storage.cmusatyalab.org/openface-models/nn4.small2.v1.t7"
 }
