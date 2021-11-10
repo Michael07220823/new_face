@@ -27,8 +27,8 @@ import logging
 import cv2
 import dlib
 from new_tools import check_image
-from .config import root_dir
-from .download import download_models
+from ..tools.config import root_dir
+from ..tools.download import download_models
 
 class FaceLandmark(object):
     """

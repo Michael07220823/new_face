@@ -29,8 +29,8 @@ import dlib
 import imutils
 from mtcnn import MTCNN
 from new_tools import check_image
-from .download import download_models
-from .config import root_dir
+from ..tools.download import download_models
+from ..tools.config import root_dir
 
 
 class FaceDetection(object):
