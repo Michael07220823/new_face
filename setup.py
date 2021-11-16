@@ -24,12 +24,12 @@ SOFTWARE.
 
 import setuptools
 
-with open("README.md", "r", encoding="utf8") as readme:
+with open("README.pypi.md", "r", encoding="utf8") as readme:
     long_description = readme.read()
 
 setuptools.setup(
     name="new_face",
-    version="0.0.4.1",
+    version="0.0.4.3",
     author="Overcomer",
     author_email="michael31703@gmail.com",
     description="Face Recognition Tools",
@@ -48,7 +48,7 @@ setuptools.setup(
         "matplotlib",
         "opencv-python",
         "opencv-contrib-python",
-        "pydot"
+        "pydot",
         "gdown",
         "new_tools",
         "new_timer",

@@ -34,9 +34,9 @@ from .kernel.lbpcnn import LBPCNN
 
 
 __author__ = "Overcomer"
-__version__ = "0.0.4.1"
+__version__ = "0.0.4.3"
 __module__ = ["kernel", "tools"]
-__class__ = ["FaceDetection", "FaceLandmark", "FaceAlignment", "LBPH", "OpenFace", "LBPCNN"]
+__classes__ = ["FaceDetection", "FaceLandmark", "FaceAlignment", "LBPH", "OpenFace", "LBPCNN"]
 
 
 # Build new_face root directory

@@ -32,6 +32,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
+
 from .openface import OpenFace
 from new_tools import check_image
 
@@ -46,7 +47,10 @@ class LBPCNN(OpenFace):
         self.model = None
 
 
-    def build_LBPCNN_model(self, name="LBPCNN", classes=18):
+    def build_LBPCNN_model(self, 
+                           name="LBPCNN", 
+                           classes=18, 
+                           learning_rate=2.5e-4):
         """
         LBPCNN architecture.
 
@@ -55,6 +59,8 @@ class LBPCNN(OpenFace):
         name: Specify CNN model name.
 
         classes: Specify classes amount.
+
+        learning_rate: Specify the learning rate of Adam optimizer.
         """
         model = Sequential(name=name)
 
@@ -93,11 +99,11 @@ class LBPCNN(OpenFace):
         model.add(layers.Dropout(0.25, name="dp2"))
         model.add(layers.BatchNormalization(name="bn7"))
 
-        model.add(layers.Dense(28, activation="softmax", name="softmax"))
+        model.add(layers.Dense(classes, activation="softmax", name="softmax"))
 
         model.compile(loss="sparse_categorical_crossentropy",
-                    optimizer=Adam(learning_rate=2.5e-4),
-                    metrics=["accuracy"])
+                      optimizer=Adam(learning_rate=learning_rate),
+                      metrics=["accuracy"])
 
         model.summary()
 
@@ -147,7 +153,7 @@ class LBPCNN(OpenFace):
         """
         Train LBPCNN model.
         
-        Aegs
+        Args
         ----
         images: Training images array.
         
