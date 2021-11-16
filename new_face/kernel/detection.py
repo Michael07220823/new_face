@@ -196,7 +196,7 @@ class FaceDetection(object):
                 logging.error("{} saved failed !".format(save_path))
                 raise FileNotFoundError
 
-        logging.info("Haar Cascade detected faces: {}".format(len(face_images)))
+        logging.debug("Haar Cascade detected faces: {}".format(len(face_images)))
         return (rois, raw_image, face_images)
     
     
@@ -282,7 +282,7 @@ class FaceDetection(object):
                 logging.error("{} saved failed !".format(save_path))
                 raise FileNotFoundError
 
-        logging.info("Dlib HOG+SVM detected faces: {}".format(len(face_images)))
+        logging.debug("Dlib HOG+SVM detected faces: {}".format(len(face_images)))
         return (rois, raw_image, face_images)
 
 
@@ -373,7 +373,7 @@ class FaceDetection(object):
                 logging.error("{} saved failed !".format(save_path))
                 raise FileNotFoundError
 
-        logging.info("SSD DNN detected faces: {}".format(len(face_images)))
+        logging.debug("SSD DNN detected faces: {}".format(len(face_images)))
         return (rois, raw_image, face_images)
 
 
@@ -460,7 +460,7 @@ class FaceDetection(object):
                 logging.error("{} saved failed !".format(save_path))
                 raise FileNotFoundError
 
-        logging.info("MTCNN detected faces: {}".format(len(face_images)))
+        logging.debug("MTCNN detected faces: {}".format(len(face_images)))
         return (rois, raw_image, face_images)
 
 
