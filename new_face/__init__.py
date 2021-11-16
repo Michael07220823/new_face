@@ -34,7 +34,7 @@ from .kernel.lbpcnn import LBPCNN
 
 
 __author__ = "Overcomer"
-__version__ = "0.0.4.3"
+__version__ = "0.0.4.4"
 __module__ = ["kernel", "tools"]
 __classes__ = ["FaceDetection", "FaceLandmark", "FaceAlignment", "LBPH", "OpenFace", "LBPCNN"]
 
