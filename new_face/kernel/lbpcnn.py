@@ -25,7 +25,10 @@ SOFTWARE.
 import os
 import pickle
 import logging
+
+import cv2
 import numpy
+from skimage.feature import local_binary_pattern as LBP
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.models import load_model
@@ -48,7 +51,8 @@ class LBPCNN(OpenFace):
 
 
     def build_LBPCNN_model(self, 
-                           name="LBPCNN", 
+                           name="LBPCNN",
+                           input_shape=(256, 256, 1),
                            classes=18, 
                            learning_rate=2.5e-4):
         """
@@ -58,13 +62,15 @@ class LBPCNN(OpenFace):
         ----
         name: Specify CNN model name.
 
+        input_shape: Specify LBPCNN input shape. Default 256x256x1(local binary patterns image)
+
         classes: Specify classes amount.
 
         learning_rate: Specify the learning rate of Adam optimizer.
         """
         model = Sequential(name=name)
 
-        model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", input_shape=(256, 256, 1), activation="relu", name="cnn1_1"))
+        model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", input_shape=input_shape, activation="relu", name="cnn1_1"))
         model.add(layers.Conv2D(filters=40, kernel_size=(3, 3), padding="same", activation="relu", name="cnn1_2"))
         model.add(layers.BatchNormalization(name="bn1"))
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2, name="mp1"))
@@ -192,7 +198,7 @@ class LBPCNN(OpenFace):
                    show_shapes=True,
                    show_layer_names=True)
         
-        log_dir = os.path.join(root_path, "logs\\fit\\{}".format(time_record))
+        log_dir = os.path.join(root_path, "logs/fit/{}".format(time_record))
         logging.info("Building tensorboard log directory to {}...".format(log_dir))
         os.makedirs(log_dir)
         
@@ -226,13 +232,23 @@ class LBPCNN(OpenFace):
         
     
     def predict(self,
-                image):
+                image,
+                LBP_sample_point=8,
+                LBP_radius=2,
+                LBP_method="uniform"):
         """
         Predict image.
 
         Args
         ----
-        image: LBP image format.
+        image: BGR image format.
+
+        LBP_sample_point: Local binary patterns  sample points. Default 8 point.
+
+        LBP_radius: Local binary patterns radius. Default 2.
+
+        LBP_method: Local binary patterns method. Default uniform method.
+
 
         Return
         ------
@@ -245,8 +261,15 @@ class LBPCNN(OpenFace):
         pred_proba = None
         
         state, image = check_image(image)
+
         if state == 0:
-            predition = self.model.predict(image)[0]
+            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            lbp_image = LBP(gray_image, P=LBP_sample_point, R=LBP_radius, method=LBP_method)
+            expand_lbp_image = numpy.expand_dims(lbp_image, axis=0)
+            expand_lbp_image = numpy.expand_dims(expand_lbp_image, axis=-1)
+            normalization_lbp_image = expand_lbp_image.astype(numpy.float32) / 255.0
+
+            predition = self.model.predict(normalization_lbp_image)[0]
             logging.debug("lbpcnn.LBPCNN.predict.prediction: {}".format(predition))
             logging.debug("lbpcnn.LBPCNN.predict.prediction shape: {}".format(predition.shape))
             pred_id = numpy.argmax(predition)

@@ -148,7 +148,7 @@ with AutoTimer("Training LBPCNN model", decimal=0):
     print()
     
     # Build LBPCNN model
-    lbpcnn.build_LBPCNN_model(classes=classes, learning_rate=2.5e-4) 
+    lbpcnn.build_LBPCNN_model(classes=classes, input_shape=(256, 256, 1), learning_rate=2.5e-4) 
     
     # train SVM classifier.
     train_history = lbpcnn.train_model(train_images_array,
