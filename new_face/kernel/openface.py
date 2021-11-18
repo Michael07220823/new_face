@@ -30,7 +30,9 @@ import numpy as np
 from imutils import resize
 from sklearn.svm import SVC
 from sklearn.preprocessing import LabelEncoder
+
 from new_tools import check_image
+from new_face.tools.download import download_models
 
 
 class OpenFace(object):
@@ -159,18 +161,19 @@ class OpenFace(object):
         embedder_network_path: Embedder network model saved path.
         """
 
+        logging.info("Loading label encoder...")
         if os.path.exists(label_encoder_path):
-            logging.info("Loading label encoder...")
             with open(label_encoder_path, "rb") as lab:
                 self.label_encoder = pickle.load(lab)
         
+        logging.info("Loading classifier...")
         if os.path.exists(classifier_path):
-            logging.info("Loading classifier...")
             with open(classifier_path, "rb") as classifier:
                 self.classifier = pickle.load(classifier)
         
-        if os.path.exists(embedder_network_path):
-            logging.info("Loading OpenFace embedder network model...")
+        logging.info("Loading OpenFace embedder network model...")
+        if not os.path.exists(embedder_network_path):
+            download_models("nn4.small2.v1.t7", os.path.dirname(embedder_network_path))
             self.embedder_model = cv2.dnn.readNetFromTorch(embedder_network_path)
 
         if label_encoder_path == str() and classifier_path == str() and embedder_network_path == str():
