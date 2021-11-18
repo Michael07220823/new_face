@@ -1,6 +1,7 @@
 tensorflow>=2.0.0
-mtcnn
+scikit-learn==1.0.1
 sklearn
+mtcnn
 imutils
 cmake
 dlib

@@ -29,7 +29,7 @@ with open("README.pypi.md", "r", encoding="utf8") as readme:
 
 setuptools.setup(
     name="new_face",
-    version="0.0.4.4",
+    version="0.0.4.5",
     author="Overcomer",
     author_email="michael31703@gmail.com",
     description="Face Recognition Tools",
@@ -39,8 +39,9 @@ setuptools.setup(
     keywords="Face Recognition",
     install_requires=[
         "tensorflow>=2.0.0",
-        "mtcnn",
+        "scikit-learn==1.0.1",
         "sklearn",
+        "mtcnn",
         "imutils",
         "cmake",
         "dlib",
@@ -58,6 +59,9 @@ setuptools.setup(
     classifiers=[
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License"
         ]
 )
