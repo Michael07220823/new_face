@@ -28,19 +28,22 @@ while vc.isOpened():
     _, frame = vc.read()
     rois, raw, faces = face_detection.ssd_dnn_detect(network,
                                                      frame)
-    # LBPCNN input shape is 256x256.
-    face = cv2.resize(faces[0], (256, 256))
 
-    pred_ID, pred_proba = lbpcnn.predict(face)
-    pred_name = lbpcnn.label_encoder.classes_[pred_ID]
-    logging.info("Prediction: {}:{:.2f}%".format(pred_name, pred_proba * 100))
+    if len(faces) > 0:
+        # LBPCNN input shape is 256x256.
+        face = cv2.resize(faces[0], (256, 256))
 
-    x, y, w, h = rois[0]
-    cv2.rectangle(frame, (x, y), (w, h), (0, 255, 0), 2)
-    cv2.putText(frame, "{}:{:.2f}%".format(pred_name, pred_proba * 100), (x, y-15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
-    cv2.imshow("LBPCNN prediction", frame)
+        pred_ID, pred_proba = lbpcnn.predict(face)
+        pred_name = lbpcnn.label_encoder.classes_[pred_ID]
+        logging.info("Prediction: {}:{:.2f}%".format(pred_name, pred_proba * 100))
+
+        x, y, w, h = rois[0]
+        cv2.rectangle(frame, (x, y), (w, h), (0, 255, 0), 2)
+        cv2.putText(frame, "{}:{:.2f}%".format(pred_name, pred_proba * 100), (x, y-15), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
     
+    cv2.imshow("LBPCNN prediction", frame)
     key = cv2.waitKey(10)
+
     if key == ord('q'):
         vc.release()
         cv2.destroyAllWindows()
