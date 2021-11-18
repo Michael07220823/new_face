@@ -26,14 +26,12 @@ or
 <br>
 
 ## Methods List
-
-Face Detection| Face Landmark  | Face Alignment  | Face Recognition
---------------|:--------------:|:---------------:|:----------------:
-haar_detect   | dlib_5_points  | mtcnn_alignment |       LBPH
-dlib_detect   | dlib_68_points | dlib_alignment  |     OpenFace
-ssd_dnn_detect|       ×        |        ×        |      LBPCNN
-mtcnn_detect  |       ×        |        ×        |         ×
-
+Face Detection  | Face Landmark  | Face Alignment  | Face Recognition
+:--------------:|:--------------:|:---------------:|:----------------:
+ haar_detect    | dlib_5_points  | mtcnn_alignment |       LBPH
+ dlib_detect    | dlib_68_points | dlib_alignment  |     OpenFace
+ ssd_dnn_detect |       ×        |        ×        |      LBPCNN
+ mtcnn_detect   |       ×        |        ×        |         ×
 <br>
 
 ## Face Detection
