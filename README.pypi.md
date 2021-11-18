@@ -4,16 +4,37 @@
     new_face repository includes face detection, face landmark, face alignment, and face recognition technique.
 <p><br>
 
+## Necessary softwares
+1. [cmake](https://cmake.org/download/)
+2. [graphviz](https://graphviz.org/download/)
+
+<br>
+
 ## Installation
-    git clone https://github.com/Michael07220823/new_face.git
-    cd new_face/
     pip install -r requirements
 
 or
 
     pip install new_face
+
+or
+
+    conda env create -f new_face36.yaml -n new_face36
+    conda env create -f new_face37.yaml -n new_face37
+    conda env create -f new_face38.yaml -n new_face38
+    conda env create -f new_face39.yaml -n new_face39
 <br>
 
+## Methods List
+
+Face Detection| Face Landmark  | Face Alignment  | Face Recognition
+--------------|:--------------:|:---------------:|:----------------:
+haar_detect   | dlib_5_points  | mtcnn_alignment |       LBPH
+dlib_detect   | dlib_68_points | dlib_alignment  |     OpenFace
+ssd_dnn_detect|       ×        |        ×        |      LBPCNN
+mtcnn_detect  |       ×        |        ×        |         ×
+
+<br>
 
 ## Face Detection
     import logging
@@ -95,5 +116,45 @@ or
 <br>
 
 
-## Reference
+## Face Recognition
+### Dataset Structure
+<p>
+&emsp;├─dataset<br>
+&emsp;│  └─YaleB_align_256<br>
+&emsp;│  &emsp;├─yaleB11<br>
+&emsp;│  &emsp;├─yaleB12<br>
+&emsp;│  &emsp;├─yaleB13<br>
+&emsp;│  &emsp;├─yaleB15<br>
+&emsp;&emsp;&emsp;&emsp;&emsp;.<br>
+&emsp;&emsp;&emsp;&emsp;&emsp;.<br>
+&emsp;&emsp;&emsp;&emsp;&emsp;.<br>
+</p>
+
+### Train and Predict Model
+#### Train **LBPH** model
+    python train_lbph.py
+<br>
+
+#### Train **OpenFace** model
+    python train_openface.py
+<br>
+
+#### Train **LBPCNN** model
+    python train_lbpcnn.py
+<br>
+
+#### Predict by **LBPH** model
+    python predict_lbph.py
+<br>
+
+#### Predict by **OpenFace** model
+    python predict_openface.py
+<br>
+
+#### Predict by **LBPCNN** model
+    python predict_lbpcnn.py
+
+---
+
+## **Reference**
 * [SHEN, YUEH-CHUN, "LBPCNN Face Recognition Algorithm Implemented on the Raspberry Pi Access Control Monitoring System", 2021](https://hdl.handle.net/11296/hytkck)

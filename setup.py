@@ -29,7 +29,7 @@ with open("README.pypi.md", "r", encoding="utf8") as readme:
 
 setuptools.setup(
     name="new_face",
-    version="0.0.4.5",
+    version="0.0.4.6",
     author="Overcomer",
     author_email="michael31703@gmail.com",
     description="Face Recognition Tools",
