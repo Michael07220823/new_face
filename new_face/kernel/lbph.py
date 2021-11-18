@@ -185,6 +185,9 @@ class LBPH(object):
         predict_distance: LBPH model predict distance. The smaller the better.
         """
 
+        predict_id = None
+        predict_distance = None
+
         state, gray_image = check_image(gray_image)
         if state == 0:
             predict_id, predict_distance = self.recognizer.predict(gray_image)
