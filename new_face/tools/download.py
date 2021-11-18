@@ -42,10 +42,10 @@ def download_models(model_name=list(), save_path=str()):
             if os.path.splitext(model_name)[-1] in deputy_files_name:
                 with open(model_path, "w") as f:
                     f.write(result.text)
-                    logging.info("Saved {} to {}.".format(model_name, model_path))
+                    logging.info("Saved {} to {}".format(model_name, save_path))
             else:
                 with open(model_path, "wb") as f:
                     f.write(result.content)
-                    logging.info("Saved {} to {}.".format(model_name, model_path))
+                    logging.info("Saved {} to {}".format(model_name, save_path))
     except ConnectionError as Cerr:
         logging.error(Cerr, exc_info=True)
