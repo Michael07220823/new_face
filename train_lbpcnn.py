@@ -17,14 +17,17 @@ FORMAT = '%(asctime)s [%(levelname)s] %(message)s'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt=DATE_FORMAT)
 
+build_time = get_now_time("%Y%m%d_%H%M%S")
 
 temp_labels = list()
-train_labels = list()
-test_labels = list()
 temp_images_path = list()
+
+train_labels = list()
 train_images_path = list()
-test_images_path = list()
 train_images_array = list()
+
+test_labels = list()
+test_images_path = list()
 test_images_array = list()
 
 LBP_sample_point = 8
@@ -36,11 +39,10 @@ epochs = 10
 batch_size = 32
 lbpcnn = LBPCNN()
 label_encoder = LabelEncoder()
-build_time = get_now_time("%Y%m%d_%H%M%S")
 
-model_path = "models/lbpcnn"
-if not os.path.exists(model_path):
-    os.makedirs(model_path)
+model_dir = "models/lbpcnn"
+if not os.path.exists(model_dir):
+    os.makedirs(model_dir)
 
 dataset_path = "dataset/YaleB_align_256"
 for root, dirs, files in os.walk(dataset_path):
@@ -129,11 +131,11 @@ with AutoTimer("Training LBPCNN model", decimal=0):
     
     # Save LabelEncoder instance.
     logging.info("Saving label encoder...")
-    label_encoder_dir = os.path.join(model_path, build_time)
+    label_encoder_dir = os.path.join(model_dir, build_time)
     if not os.path.exists(label_encoder_dir):
         os.makedirs(label_encoder_dir)
         
-    label_encoder_path = os.path.join(model_path, build_time, "{}_lbpcnn_label_encoder.pickle".format(build_time))
+    label_encoder_path = os.path.join(model_dir, build_time, "{}_lbpcnn_label_encoder.pickle".format(build_time))
     with open(label_encoder_path, "wb") as lab:
         pickle.dump(label_encoder, lab)
 
@@ -158,7 +160,7 @@ with AutoTimer("Training LBPCNN model", decimal=0):
                                        epochs=epochs,
                                        batch_size=batch_size,
                                        time_record=build_time,
-                                       save_path=model_path)
+                                       save_path=model_dir)
 
     logging.debug(train_history.history["accuracy"])
     logging.debug(train_history.history["val_accuracy"])
@@ -178,7 +180,7 @@ with AutoTimer("Training LBPCNN model", decimal=0):
              alpha=0.2,
              linewidth=1,
              linestyle="--")
-    plt.savefig(os.path.join(model_path, build_time, "{}_accuracy.jpg".format(build_time)), bbox_inches ='tight')
+    plt.savefig(os.path.join(model_dir, build_time, "{}_accuracy.jpg".format(build_time)), bbox_inches ='tight')
     plt.show()
     
     # Loss chart.
@@ -192,5 +194,5 @@ with AutoTimer("Training LBPCNN model", decimal=0):
              alpha=0.2,
              linewidth=1,
              linestyle="--")
-    plt.savefig(os.path.join(model_path, build_time, "{}_loss.jpg".format(build_time)), bbox_inches ='tight')
+    plt.savefig(os.path.join(model_dir, build_time, "{}_loss.jpg".format(build_time)), bbox_inches ='tight')
     plt.show()
