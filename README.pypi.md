@@ -19,10 +19,10 @@ or
 
 or
 
-    conda env create -f new_face36.yaml -n new_face36
-    conda env create -f new_face37.yaml -n new_face37
-    conda env create -f new_face38.yaml -n new_face38
-    conda env create -f new_face39.yaml -n new_face39
+    conda env create -f conf/new_face36.yaml -n new_face36
+    conda env create -f conf/new_face37.yaml -n new_face37
+    conda env create -f conf/new_face38.yaml -n new_face38
+    conda env create -f conf/new_face39.yaml -n new_face39
 <br>
 
 ## Methods List
