@@ -25,23 +25,27 @@ SOFTWARE.
 import os
 import logging
 import requests
+from requests.exceptions import ConnectionError
 from .models import model_dict, deputy_files_name
 
 
 http_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"}
 
 def download_models(model_name=list(), save_path=str()):
+    try:
         model_path = os.path.join(save_path, model_name)
         logging.debug("download.download_models.model_path: {}".format(model_path))
 
-        result = requests.get(url=model_dict[model_name], headers=http_headers, timeout=10)
+        result = requests.get(url=model_dict[model_name], headers=http_headers, timeout=30)
 
         if result.status_code == 200:
             if os.path.splitext(model_name)[-1] in deputy_files_name:
                 with open(model_path, "w") as f:
                     f.write(result.text)
-                    logging.info("Saved {} to {}.".format(model_name, model_path))
+                    logging.info("Saved {} to {}".format(model_name, save_path))
             else:
                 with open(model_path, "wb") as f:
                     f.write(result.content)
-                    logging.info("Saved {} to {}.".format(model_name, model_path))
+                    logging.info("Saved {} to {}".format(model_name, save_path))
+    except ConnectionError as Cerr:
+        logging.error(Cerr, exc_info=True)

@@ -128,7 +128,23 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Shell
 *.sh
+
+# Image format
 *.jpg
 *.png
 *.gif
+*.pickle
+*.yaml
+
+# Tensorflow framework
+*.pb
+*.index
+*.v2
+*.profile-empty
+variables.*
+
+# Comress
+*.tar
+*.gz

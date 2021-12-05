@@ -3,8 +3,9 @@ import pickle
 import logging
 import cv2
 import numpy as np
-from new_tools import check_image
 from sklearn.preprocessing import LabelEncoder
+
+from new_tools import check_image
 
 
 class LBPH(object):
@@ -184,8 +185,11 @@ class LBPH(object):
         predict_distance: LBPH model predict distance. The smaller the better.
         """
 
+        predict_id = None
+        predict_distance = None
+
         state, gray_image = check_image(gray_image)
-        if state ==0:
+        if state == 0:
             predict_id, predict_distance = self.recognizer.predict(gray_image)
             logging.debug("Prediction result: {}:{:.6f}".format(predict_id, predict_distance))
 

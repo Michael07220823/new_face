@@ -30,7 +30,10 @@ import numpy as np
 from imutils import resize
 from sklearn.svm import SVC
 from sklearn.preprocessing import LabelEncoder
+
 from new_tools import check_image
+from new_face.tools.config import root_dir
+from new_face.tools.download import download_models
 
 
 class OpenFace(object):
@@ -137,8 +140,7 @@ class OpenFace(object):
 
     def load_model(self,
                    label_encoder_path=str(),
-                   classifier_path=str(),
-                   embedder_network_path=str()):
+                   classifier_path=str()):
         """
         Load OpenFace label encoder、classifier and embedding network model.
         
@@ -147,34 +149,34 @@ class OpenFace(object):
         label_encoder_path: Label encoder saved path.
         
         classifier_path: Classifier saved path.
-        
-        embedder_network_path: Embedder network model saved path.
+
         
         Return
         ------
         label_encoder_path: Label encoder saved path.
         
         classifier_path: Classifier saved path.
-        
-        embedder_network_path: Embedder network model saved path.
         """
 
+        logging.info("Loading label encoder...")
         if os.path.exists(label_encoder_path):
-            logging.info("Loading label encoder...")
             with open(label_encoder_path, "rb") as lab:
                 self.label_encoder = pickle.load(lab)
         
+        logging.info("Loading classifier...")
         if os.path.exists(classifier_path):
-            logging.info("Loading classifier...")
             with open(classifier_path, "rb") as classifier:
                 self.classifier = pickle.load(classifier)
         
-        if os.path.exists(embedder_network_path):
-            logging.info("Loading OpenFace embedder network model...")
-            self.embedder_model = cv2.dnn.readNetFromTorch(embedder_network_path)
+        logging.info("Loading OpenFace nn4.small2.v1.t7 model...")
+        model_name = "nn4.small2.v1.t7"
+        model_path = os.path.join(root_dir, model_name)
+        if not os.path.exists(model_path):
+            download_models(model_name, root_dir)
+        self.embedder_model = cv2.dnn.readNetFromTorch(model_path)
 
-        if label_encoder_path == str() and classifier_path == str() and embedder_network_path == str():
-            logging.critical("No specify any path !")
+        if label_encoder_path == str() or classifier_path == str():
+            logging.critical("Please input label encoder and classifier path !")
             raise ValueError
 
         logging.info("Loaded OpenFace model finish !")

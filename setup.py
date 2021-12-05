@@ -24,12 +24,12 @@ SOFTWARE.
 
 import setuptools
 
-with open("README.md", "r", encoding="utf8") as readme:
+with open("README.pypi.md", "r", encoding="utf8") as readme:
     long_description = readme.read()
 
 setuptools.setup(
     name="new_face",
-    version="0.0.4.1",
+    version="0.0.4.6",
     author="Overcomer",
     author_email="michael31703@gmail.com",
     description="Face Recognition Tools",
@@ -39,8 +39,9 @@ setuptools.setup(
     keywords="Face Recognition",
     install_requires=[
         "tensorflow>=2.0.0",
-        "mtcnn",
+        "scikit-learn==1.0.1",
         "sklearn",
+        "mtcnn",
         "imutils",
         "cmake",
         "dlib",
@@ -48,7 +49,7 @@ setuptools.setup(
         "matplotlib",
         "opencv-python",
         "opencv-contrib-python",
-        "pydot"
+        "pydot",
         "gdown",
         "new_tools",
         "new_timer",
@@ -58,6 +59,9 @@ setuptools.setup(
     classifiers=[
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License"
         ]
 )
