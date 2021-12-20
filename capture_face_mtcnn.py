@@ -1,8 +1,9 @@
 # Usage
-# python capture_face_mtcnn.py --video_source 0 --flip false --alignment true --size 256 --name michael --output output --vision true
-# python capture_face_mtcnn.py --video_source images/doctor.mp4 --flip false --alignment true --size 256 --name michael --output output --vision true
-# python capture_face_mtcnn.py --video_source images/michael.jpg --flip false --alignment true --size 256 --name michael --output output --vision true
-# python capture_face_mtcnn.py --video_source images --flip false --alignment true --size 256 --name align --output output --vision true
+# python capture_face_mtcnn.py --video_source 0 --flip false --alignment true --size 256 --name michael --output data --vision true
+# python capture_face_mtcnn.py --video_source 0 --flip false --alignment true --size 256 --name jerry --output data --vision true
+# python capture_face_mtcnn.py --video_source images/doctor.mp4 --flip false --alignment true --size 256 --name michael --output data --vision true
+# python capture_face_mtcnn.py --video_source images/michael.jpg --flip false --alignment true --size 256 --name michael --output data --vision true
+# python capture_face_mtcnn.py --video_source images --flip false --alignment true --size 256 --name align --output data --vision true
 
 import os
 import argparse
