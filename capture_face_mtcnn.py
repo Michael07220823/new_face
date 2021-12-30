@@ -1,5 +1,5 @@
 # Usage
-# python capture_face_mtcnn.py --video_source 0 --flip false --alignment true --size 256 --name michael --output data --vision true
+# python capture_face_mtcnn.py --video_source 0 --flip false --alignment true --size 256 --name kevin --output data --vision false
 # python capture_face_mtcnn.py --video_source 0 --flip false --alignment true --size 256 --name jerry --output data --vision true
 # python capture_face_mtcnn.py --video_source images/doctor.mp4 --flip false --alignment true --size 256 --name michael --output data --vision true
 # python capture_face_mtcnn.py --video_source images/michael.jpg --flip false --alignment true --size 256 --name michael --output data --vision true
@@ -131,10 +131,14 @@ with AutoTimer("Capture face", 0):
 
                         logging.info("Captured {} face images...".format(face_counter))
             cv2.destroyAllWindows()
+        except KeyboardInterrupt:
+            logging.info("Captured 'Ctrl + C' to interrupt program !")
         except Exception as err:
             logging.exception("{}".format(err), exc_info=True)
-            vc.release()
-            cv2.destroyAllWindows()
+
+        logging.info("Captured {} face images...".format(face_counter))
+        vc.release()
+        cv2.destroyAllWindows()
 
     # Video.
     elif vc_code == 1:
@@ -197,10 +201,14 @@ with AutoTimer("Capture face", 0):
 
                         logging.info("Captured {} face images...".format(face_counter))
             cv2.destroyAllWindows()
+        except KeyboardInterrupt:
+            logging.info("Captured 'Ctrl + C' to interrupt program !")
         except Exception as err:
             logging.exception("{}".format(err), exc_info=True)
-            vc.release()
-            cv2.destroyAllWindows()
+        
+        logging.info("Captured {} face images...".format(face_counter))
+        vc.release()
+        cv2.destroyAllWindows()
 
     # Image.
     elif vc_code == 2:
@@ -361,9 +369,13 @@ with AutoTimer("Capture face", 0):
                                 logging.info("Captured {} face images...".format(face_counter))
             logging.info("Finished captured face image !")
             cv2.destroyAllWindows()
+        except KeyboardInterrupt:
+            logging.info("Captured 'Ctrl + C' to interrupt program !")
         except Exception as err:
             logging.exception("{}".format(err), exc_info=True)
-            vc.release()
-            cv2.destroyAllWindows()
+        
+        logging.info("Captured {} face images...".format(face_counter))
+        vc.release()
+        cv2.destroyAllWindows()
     else:
         logging.critical("Error !")
