@@ -6,10 +6,11 @@ import logging
 import argparse
 import cv2
 from new_face import FaceDetection
+from new_timer import AutoTimer
 
 FORMAT = '%(asctime)s [%(levelname)s] %(message)s'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT, datefmt=DATE_FORMAT)
+logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt=DATE_FORMAT)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-s", "--source", required=True, type=str, help="Video or directory.")
@@ -90,4 +91,5 @@ def main():
         logging.info("Captured 'ctrl+c' to interrupt program !")
 
 if __name__ == "__main__":
-    main()
+    with AutoTimer("Captured face objects", 4):
+        main()
