@@ -1,6 +1,5 @@
 import os
 import logging
-from turtle import width
 import cv2
 from new_face import FaceDetection
 
