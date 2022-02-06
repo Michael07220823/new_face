@@ -148,3 +148,9 @@ variables.*
 # Comress
 *.tar
 *.gz
+
+# Video
+*.mp4
+
+# Text
+*.txt
