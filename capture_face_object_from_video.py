@@ -1,5 +1,5 @@
 # Usage
-# python capture_face_object_from_video.py --source "data/《狄仁杰之骷髅将军》 2022年最新国产动作电影高清  4K 国语中字-1080P.mp4" --output outputs
+# python capture_face_object_from_video.py --source "data/1080P/喜剧 -《心花路放》(English Sub) _ 主演 - 黄渤 _ 徐峥 _ 袁泉 _ 周冬雨 1080HD.mp4" --output outputs
 
 import os
 import logging
@@ -22,7 +22,7 @@ def main():
     video = None
     dir_path = None
     output_path = None
-    frame_counter = 1000000
+    frame_counter = 1035087
     pass_counter = 0
 
     try:
@@ -31,6 +31,7 @@ def main():
         if os.path.exists(source) and not os.path.isdir(source):
             video = cv2.VideoCapture(source)
             frames_count = video.get(cv2.CAP_PROP_FRAME_COUNT)
+            frames_position = int(video.get(cv2.CAP_PROP_POS_FRAMES))
         else:
             dir_path = source
 
