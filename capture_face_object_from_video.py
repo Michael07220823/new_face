@@ -1,5 +1,5 @@
 # Usage
-# python capture_face_object_from_video.py --source data\\video\\玩命關頭6.mp4 --output outputs
+# python capture_face_object_from_video.py --source "data/《狄仁杰之骷髅将军》 2022年最新国产动作电影高清  4K 国语中字-1080P.mp4" --output outputs
 
 import os
 import logging
@@ -22,7 +22,7 @@ def main():
     video = None
     dir_path = None
     output_path = None
-    frame_counter = 0
+    frame_counter = 1000000
     pass_counter = 0
 
     try:
@@ -30,6 +30,7 @@ def main():
         source = args["source"]
         if os.path.exists(source) and not os.path.isdir(source):
             video = cv2.VideoCapture(source)
+            frames_count = video.get(cv2.CAP_PROP_FRAME_COUNT)
         else:
             dir_path = source
 
@@ -40,7 +41,7 @@ def main():
             logging.info("Builed {} successfully !".format(output_path))
 
         # Capture frame and write yolo format text.
-        while video != None and video.isOpened():
+        while video != None and video.isOpened() and frames_position < frames_count:
             state, frame = video.read()
 
             if state:
@@ -48,11 +49,11 @@ def main():
                 logging.debug("Height:{}, Width: {}".format(image_height, image_width))
 
                 face_detect = FaceDetection()
-                mtcnn = face_detect.load_detector(face_detect.MTCNN)
+                detector = face_detect.load_detector(face_detect.SSD_DNN)
 
-                rois, raw_image, face_images = face_detect.mtcnn_detect(mtcnn,
-                                                                        frame,
-                                                                        conf_threshold=0.9)
+                rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
+                                                                          frame,
+                                                                          conf_threshold=0.9)
                 if len(face_images) > 0:
                     # Image path.
                     image_name = "{}".format(frame_counter).zfill(8) + ".png"
@@ -86,6 +87,9 @@ def main():
             else: 
                 pass_counter += 1
                 logging.warning("Pass frame {} count !".format(pass_counter))
+            
+            # Get video frame index.
+            frames_position = int(video.get(cv2.CAP_PROP_POS_FRAMES))
     except KeyboardInterrupt:
         video.release()
         logging.info("Captured 'ctrl+c' to interrupt program !")
