@@ -22,7 +22,7 @@ def main():
     video = None
     dir_path = None
     output_path = None
-    frame_counter = 1035087
+    frame_counter = 0
     pass_counter = 0
 
     try:
