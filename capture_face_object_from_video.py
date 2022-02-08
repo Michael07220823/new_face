@@ -1,5 +1,5 @@
 # Usage
-# python capture_face_object_from_video.py --source "data/720P/抗美援朝长津湖之战高清版-720P.mp4" --output "/Volumes/FreeAgent G/SSD_DNN/720P"
+# python capture_face_object_from_video.py --source "data/videos/720P/抗美援朝长津湖之战高清版-720P.mp4" --output e:/SSD_DNN/720P
 
 
 import os
@@ -80,11 +80,18 @@ def main():
 
                     # Save text.
                     with open(object_text_path, "w") as f:
-                        for x, y, w, h in rois:
-                            center_x = (x + (w / 2)) / image_width
-                            center_y = (y + (h / 2)) / image_height
-                            object_width = w / image_width
-                            object_height = w / image_height
+                        for x1, y1, x2, y2 in rois:
+                            logging.debug("{} {} {} {}".format(x1, y1, x2, y2))
+                            center_x = (x1 + abs(((x2 - x1) / 2))) / image_width
+                            center_y = (y1 + abs(((y2 - y1) / 2))) / image_height
+                            object_width = abs(x2 - x1)  / image_width
+                            object_height = abs(y2 - y1) / image_height
+
+                        # for x, y, w, h in rois:
+                            # center_x = (x + (w / 2)) / image_width
+                            # center_y = (y + (h / 2)) / image_height
+                            # object_width = w / image_width
+                            # object_height = w / image_height
                         
                             f.write("0 {} {} {} {}\n".format(center_x, center_y, object_width, object_height))
                         logging.info("Writed {} face objects to {} successfully !".format(len(rois), object_text_path))
