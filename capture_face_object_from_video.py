@@ -1,5 +1,6 @@
 # Usage
-# python capture_face_object_from_video.py --source "data/480P/2022-zui-xin-dian-ying-duan-jin-dian-ying-gao-qing-1080p-full-movies.mp4" --output outputs/MTCNN/480P
+# python capture_face_object_from_video.py --source "data/720P/抗美援朝长津湖之战高清版-720P.mp4" --output "/Volumes/FreeAgent G/SSD_DNN/720P"
+
 
 import os
 import logging
@@ -22,7 +23,7 @@ def main():
     video = None
     dir_path = None
     output_path = None
-    frame_counter = 1035087
+    frame_counter = 0
     pass_counter = 0
 
     try:
@@ -50,18 +51,18 @@ def main():
                 logging.debug("Height:{}, Width: {}".format(image_height, image_width))
 
                 face_detect = FaceDetection()
-                detector = face_detect.load_detector(face_detect.MTCNN)
-                # detector = face_detect.load_detector(face_detect.SSD_DNN)
+                # detector = face_detect.load_detector(face_detect.MTCNN)
+                detector = face_detect.load_detector(face_detect.SSD_DNN)
 
-                rois, raw_image, face_images = face_detect.mtcnn_detect(detector,
-                                                                        frame,
-                                                                        conf_threshold=0.9)
-                # rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
-                #                                                           frame,
-                #                                                           conf_threshold=0.9)
+                # rois, raw_image, face_images = face_detect.mtcnn_detect(detector,
+                #                                                         frame,
+                #                                                         conf_threshold=0.9)
+                rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
+                                                                          frame,
+                                                                          conf_threshold=0.9)
                 if len(face_images) > 0:
                     # Image path.
-                    image_name = "{}".format(frame_counter).zfill(8) + ".png"
+                    image_name = "{}".format(frame_counter).zfill(8) + ".jpg"
                     image_path = os.path.join(output_path, image_name)
                     logging.debug("image_name: {}".format(image_name))
                     logging.debug("image_path: {}".format(image_path))
@@ -74,7 +75,7 @@ def main():
                     frame_counter += 1
 
                     # Save image.
-                    cv2.imwrite(image_path, frame, [cv2.IMWRITE_PNG_COMPRESSION, 5])
+                    cv2.imwrite(image_path, frame, [cv2.IMWRITE_JPEG_QUALITY, 100])
                     logging.info("Saved {} successfully !".format(image_path)) if os.path.exists(image_path) else logging.error("Saved {} failed !".format(image_path))
 
                     # Save text.
