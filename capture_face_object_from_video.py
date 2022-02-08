@@ -1,5 +1,5 @@
 # Usage
-# python capture_face_object_from_video.py --source "data/1080P/喜剧 -《心花路放》(English Sub) _ 主演 - 黄渤 _ 徐峥 _ 袁泉 _ 周冬雨 1080HD.mp4" --output outputs
+# python capture_face_object_from_video.py --source "data/480P/2022-zui-xin-dian-ying-duan-jin-dian-ying-gao-qing-1080p-full-movies.mp4" --output outputs/MTCNN/480P
 
 import os
 import logging
@@ -50,11 +50,15 @@ def main():
                 logging.debug("Height:{}, Width: {}".format(image_height, image_width))
 
                 face_detect = FaceDetection()
-                detector = face_detect.load_detector(face_detect.SSD_DNN)
+                detector = face_detect.load_detector(face_detect.MTCNN)
+                # detector = face_detect.load_detector(face_detect.SSD_DNN)
 
-                rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
-                                                                          frame,
-                                                                          conf_threshold=0.9)
+                rois, raw_image, face_images = face_detect.mtcnn_detect(detector,
+                                                                        frame,
+                                                                        conf_threshold=0.9)
+                # rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
+                #                                                           frame,
+                #                                                           conf_threshold=0.9)
                 if len(face_images) > 0:
                     # Image path.
                     image_name = "{}".format(frame_counter).zfill(8) + ".png"
