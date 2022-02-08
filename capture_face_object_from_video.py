@@ -59,16 +59,16 @@ def main():
                 #                                                         conf_threshold=0.9)
                 rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
                                                                           frame,
-                                                                          conf_threshold=0.9)
+                                                                          conf_threshold=0.7)
                 if len(face_images) > 0:
                     # Image path.
-                    image_name = "{}".format(frame_counter).zfill(8) + ".jpg"
+                    image_name = "{}".format(frame_counter).zfill(10) + ".jpg"
                     image_path = os.path.join(output_path, image_name)
                     logging.debug("image_name: {}".format(image_name))
                     logging.debug("image_path: {}".format(image_path))
 
                     # Text path.
-                    object_text_name = "{}".format(frame_counter).zfill(8) + ".txt"
+                    object_text_name = "{}".format(frame_counter).zfill(10) + ".txt"
                     object_text_path = os.path.join(output_path, object_text_name)
                     logging.debug("object_text_name: {}".format(object_text_name))
                     logging.debug("object_text_path: {}".format(object_text_path))
