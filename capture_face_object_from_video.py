@@ -1,5 +1,5 @@
 # Usage
-# python capture_face_object_from_video.py --source "data/videos/720P/抗美援朝长津湖之战高清版-720P.mp4" --output e:/SSD_DNN/720P
+# python capture_face_object_from_video.py --source "data/videos/720P/抗美援朝长津湖之战高清版-720P.mp4" --output e:/MTCNN/720P
 
 
 import os
@@ -51,15 +51,15 @@ def main():
                 logging.debug("Height:{}, Width: {}".format(image_height, image_width))
 
                 face_detect = FaceDetection()
-                # detector = face_detect.load_detector(face_detect.MTCNN)
-                detector = face_detect.load_detector(face_detect.SSD_DNN)
+                detector = face_detect.load_detector(face_detect.MTCNN)
+                # detector = face_detect.load_detector(face_detect.SSD_DNN)
 
-                # rois, raw_image, face_images = face_detect.mtcnn_detect(detector,
-                #                                                         frame,
-                #                                                         conf_threshold=0.9)
-                rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
-                                                                          frame,
-                                                                          conf_threshold=0.7)
+                rois, raw_image, face_images = face_detect.mtcnn_detect(detector,
+                                                                        frame,
+                                                                        conf_threshold=0.9)
+                # rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
+                #                                                           frame,
+                #                                                           conf_threshold=0.9)
                 if len(face_images) > 0:
                     # Image path.
                     image_name = "{}".format(frame_counter).zfill(10) + ".jpg"
@@ -79,19 +79,21 @@ def main():
                     logging.info("Saved {} successfully !".format(image_path)) if os.path.exists(image_path) else logging.error("Saved {} failed !".format(image_path))
 
                     # Save text.
-                    with open(object_text_path, "w") as f:
-                        for x1, y1, x2, y2 in rois:
-                            logging.debug("{} {} {} {}".format(x1, y1, x2, y2))
-                            center_x = (x1 + abs(((x2 - x1) / 2))) / image_width
-                            center_y = (y1 + abs(((y2 - y1) / 2))) / image_height
-                            object_width = abs(x2 - x1)  / image_width
-                            object_height = abs(y2 - y1) / image_height
+                    with open(object_text_path, "w", encoding="utf8") as f:
+                        # for x1, y1, x2, y2 in rois:
+                        #     logging.debug("{} {} {} {}".format(x1, y1, x2, y2))
+                            # object_width = abs(x2 - x1)
+                            # object_height = abs(y2 - y1)
+                            # center_x = (x1 + (object_width / 2)) / image_width
+                            # center_y = (y1 + (object_height / 2)) / image_height
+                            # object_width = object_width  / image_width
+                            # object_height = object_height / image_height
 
-                        # for x, y, w, h in rois:
-                            # center_x = (x + (w / 2)) / image_width
-                            # center_y = (y + (h / 2)) / image_height
-                            # object_width = w / image_width
-                            # object_height = w / image_height
+                        for x, y, w, h in rois:
+                            center_x = (x + (w / 2)) / image_width
+                            center_y = (y + (h / 2)) / image_height
+                            object_width = w / image_width
+                            object_height = h / image_height
                         
                             f.write("0 {} {} {} {}\n".format(center_x, center_y, object_width, object_height))
                         logging.info("Writed {} face objects to {} successfully !".format(len(rois), object_text_path))
