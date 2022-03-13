@@ -138,6 +138,9 @@ dmypy.json
 *.pickle
 *.yaml
 
+# Video
+*.mp4
+
 # Tensorflow framework
 *.pb
 *.index
