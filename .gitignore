@@ -133,6 +133,7 @@ dmypy.json
 
 # Image format
 *.jpg
+*.jpeg
 *.png
 *.gif
 *.pickle
@@ -151,3 +152,6 @@ variables.*
 # Comress
 *.tar
 *.gz
+
+# Other
+*.txt
