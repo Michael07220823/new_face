@@ -1,6 +1,7 @@
 # Usage
 # python capture_face_object_from_video.py --source 0 -pi 0
-# python capture_face_object_from_video.py --source data/YaleB_align_256/yaleB11 -pi 1
+# python capture_face_object_from_video.py --source data/videos/michael.mp4 -pi 0
+# python capture_face_object_from_video.py --source data/videos/720P/抗美援朝长津湖之战高清版-720P.mp4 -pi 0
 
 
 import os
@@ -13,7 +14,7 @@ from new_tools import check_image
 
 FORMAT = '%(asctime)s [%(levelname)s] %(message)s'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT, datefmt=DATE_FORMAT)
+logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt=DATE_FORMAT)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-s", "--source", required=True, type=str, help="Video or directory.")
@@ -23,6 +24,7 @@ args = vars(ap.parse_args())
 
 
 def main():
+    conf_threshold = 0.95
     video = None
     video_source = 0
     person_index = args["person_index"]
@@ -69,10 +71,10 @@ def main():
 
                     rois, raw_image, face_images = face_detect.mtcnn_detect(detector,
                                                                             frame,
-                                                                            conf_threshold=0.9)
+                                                                            conf_threshold=conf_threshold)
                     # rois, raw_image, face_images = face_detect.ssd_dnn_detect(detector,
                     #                                                           frame,
-                    #                                                           conf_threshold=0.9)
+                    #                                                           conf_threshold=conf_threshold)
                     if len(face_images) > 0:
                         # Image path.
                         image_name = "{}".format(frame_counter).zfill(10) + ".jpg"
@@ -124,9 +126,9 @@ def main():
                 full_image_path = os.path.join(image_dir, img_path)
                 rois, raw, face_images = face_detect.mtcnn_detect(detector,
                                                                   full_image_path,
-                                                                  conf_threshold=0.9)
+                                                                  conf_threshold=conf_threshold)
                 image_height, image_width, image_channel = raw.shape
-                
+
                 if len(face_images) > 0:
                         # Image path.
                         image_name = "{}".format(frame_counter).zfill(10) + ".jpg"
